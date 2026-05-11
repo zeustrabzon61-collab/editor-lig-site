@@ -65,7 +65,7 @@ body {
   text-shadow: var(--neon-glow);
 }
 
-/* Navbar Redesign */
+/* Navbar */
 .navbar {
   height: 80px;
   background: rgba(2, 2, 5, 0.8);
@@ -98,20 +98,17 @@ body {
 .nav-links {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .nav-links a {
   text-decoration: none;
   color: var(--text-secondary);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
 }
 
 .nav-links a:hover, .nav-links a.active {
@@ -119,9 +116,9 @@ body {
   background: rgba(0, 242, 255, 0.05);
 }
 
-/* Hero Section WOW */
+/* Hero Section */
 .hero {
-  padding: 100px 0;
+  padding: 120px 0;
   text-align: center;
   position: relative;
 }
@@ -131,7 +128,7 @@ body {
   color: var(--accent-primary);
   padding: 0.5rem 1.5rem;
   border-radius: 100px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 2px;
   margin-bottom: 2rem;
@@ -140,47 +137,64 @@ body {
 }
 
 .hero h1 {
-  font-size: 5rem;
-  line-height: 1;
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  line-height: 0.9;
   margin-bottom: 2rem;
   text-transform: uppercase;
+  font-weight: 900;
 }
 
 .hero p {
   color: var(--text-secondary);
-  font-size: 1.2rem;
-  max-width: 600px;
+  font-size: 1.1rem;
+  max-width: 700px;
   margin: 0 auto 3rem;
+}
+
+.hero-btns {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
 .hero-stats {
   display: flex;
   justify-content: center;
-  gap: 4rem;
-  margin-top: 4rem;
+  gap: 5rem;
+  margin-top: 5rem;
 }
 
 .h-stat-item h3 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 900;
   margin-bottom: 0.5rem;
 }
 
 .h-stat-item p {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin: 0;
+  color: var(--text-secondary);
 }
 
-/* Standings WOW */
-.section-title {
-  font-size: 2.5rem;
+/* Section Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 3rem;
-  text-transform: uppercase;
-  font-weight: 900;
 }
 
+.section-title {
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Tables & Lists */
 .standings-table {
   width: 100%;
   border-collapse: collapse;
@@ -188,102 +202,40 @@ body {
 
 .standings-table th {
   text-align: left;
-  padding: 1.5rem 1rem;
+  padding: 1rem;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
   border-bottom: 1px solid var(--glass-border);
 }
 
 .standings-table td {
-  padding: 1.5rem 1rem;
+  padding: 1.25rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .team-cell {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .team-logo-placeholder {
-  width: 45px;
-  height: 45px;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  background: var(--bg-main);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--glass-border);
-  color: var(--accent-primary);
   font-weight: 900;
-}
-
-.team-name {
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.points-cell {
-  font-weight: 900;
-  font-size: 1.2rem;
   color: var(--accent-primary);
 }
 
-/* Buttons WOW */
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: black;
-  padding: 1rem 2.5rem;
-  border-radius: 12px;
-  font-weight: 800;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-  box-shadow: var(--neon-glow);
-}
-
-.btn-primary:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  padding: 1rem 2.5rem;
-  border-radius: 12px;
-  font-weight: 800;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  transition: all 0.3s ease;
-  border: 1px solid var(--glass-border);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Results Cards */
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
+/* Results */
 .result-card {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .r-teams {
@@ -292,71 +244,169 @@ body {
   align-items: center;
 }
 
-.r-team {
-  text-align: center;
-  flex: 1;
-}
-
-.r-score {
-  font-size: 2rem;
+.r-team { text-align: center; flex: 1; }
+.r-logo {
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.5rem;
+  border: 1px solid var(--glass-border);
   font-weight: 900;
-  padding: 0 1rem;
 }
 
-/* Leaderboards WOW */
-.stats-grid {
+.r-score-box {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--accent-primary);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: black;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--glass-border);
+  transition: all 0.3s ease;
+}
+
+/* Quick Links Grid */
+.links-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
+  margin-top: 4rem;
 }
 
-.stat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 12px;
-  margin-bottom: 0.75rem;
-}
-
-/* Footer */
-.footer {
-  padding: 4rem 0;
-  border-top: 1px solid var(--glass-border);
+.link-card {
   text-align: center;
-  margin-top: 6rem;
+  padding: 3rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.link-card h3 {
+  margin: 1.5rem 0 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.link-card p {
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .hero h1 { font-size: 3rem; }
-  .nav-links { display: none; }
-  .hero-stats { gap: 2rem; flex-wrap: wrap; }
+/* Home Layout */
+.home-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem;
 }
 
-/* Admin Styles update */
+/* Admin Styles */
+.admin-login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 1rem;
+  background: var(--bg-main);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: white;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.admin-tabs button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.admin-tabs button.active {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: rgba(0, 242, 255, 0.05);
+}
+
 .admin-textarea {
   width: 100%;
-  height: 200px;
-  background: rgba(0, 0, 0, 0.3);
+  height: 250px;
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 1rem;
-  color: white;
-  font-family: monospace;
+  border-radius: 15px;
+  padding: 1.5rem;
+  color: var(--accent-primary);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
 }
 
-.status-msg {
-  margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
 }
 
-.status-msg.success { background: rgba(0, 255, 100, 0.1); color: #00ff64; }
-.status-msg.error { background: rgba(255, 0, 100, 0.1); color: #ff0064; }
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+@media (max-width: 1024px) {
+  .home-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 2rem; flex-wrap: wrap; }
+}

@@ -17,7 +17,7 @@ const Home = () => {
         <div className="home-grid">
           <div className="main-col">
             <div className="section-header">
-              <h2 className="section-title"><Trophy className="neon-text" size={32} /> Lig <span className="gradient-text">Tablosu</span></h2>
+              <h2 className="section-title"><Trophy className="neon-text" size={32} /> LİG <span className="gradient-text">TABLOSU</span></h2>
               <NavLink to="/puan-durumu" className="view-all">Tümünü Gör <ArrowRight size={16} /></NavLink>
             </div>
             <div className="glass-card standings-card">
@@ -27,7 +27,7 @@ const Home = () => {
 
           <aside className="side-col">
             <div className="section-header">
-              <h2 className="section-title"><Calendar className="neon-text" size={32} /> Son <span className="gradient-text">Sonuçlar</span></h2>
+              <h2 className="section-title"><Calendar className="neon-text" size={32} /> SON <span className="gradient-text">SONUÇLAR</span></h2>
             </div>
             <div className="results-list">
               {recentMatches.length > 0 ? recentMatches.map((match, idx) => (
@@ -39,7 +39,7 @@ const Home = () => {
                     </div>
                     <div className="r-score-box">
                       <span className="r-score">{match.score1}</span>
-                      <span className="r-divider">-</span>
+                      <span className="r-divider">:</span>
                       <span className="r-score">{match.score2}</span>
                     </div>
                     <div className="r-team">
