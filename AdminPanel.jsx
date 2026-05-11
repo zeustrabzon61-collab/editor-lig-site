@@ -21,7 +21,7 @@ const AdminPanel = () => {
 
   const [newStat, setNewStat] = useState({ playerName: '', team: '', goals: 0, assists: 0, saves: 0, tackles: 0 });
 
-  const ADMIN_PASSWORD = 'admin123';
+  const ADMIN_PASSWORD = 'Bulanahelalolsun611967';
 
   useEffect(() => {
     // Giriş durumunu ve takımları yükle
