@@ -32,8 +32,8 @@ const Hero = () => {
             <p>Haftalık Lig</p>
           </div>
           <div className="h-stat-item">
-            <h3 className="neon-text">32</h3>
-            <p>Büyük Maç</p>
+            <h3 className="neon-text">16</h3>
+            <p>MAÇ</p>
           </div>
         </div>
       </div>
