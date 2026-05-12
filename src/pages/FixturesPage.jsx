@@ -1,5 +1,4 @@
-import React from 'react';
-import { Calendar } from 'lucide-react';
+
 
 const teams = ["BAY FC", "HAYAT OKULU FC", "OOG FC", "ANTONY ULTRAS FC"];
 

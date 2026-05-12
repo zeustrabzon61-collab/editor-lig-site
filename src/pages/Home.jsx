@@ -1,60 +1,82 @@
-import React from 'react';
-import Hero from '../components/Hero';
 import Standings from '../components/Standings';
+import Hero from '../components/Hero';
 import { getStorageData } from '../utils/storage';
-import { Clock } from 'lucide-react';
+import { Calendar, Trophy, BarChart3, ArrowRight } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 
 const Home = () => {
   const { matches } = getStorageData();
-  
-  // En son oynanan 3 maçı al (tersten sırala)
-  const recentMatches = [...matches].reverse().slice(0, 3);
+  const recentMatches = matches.slice(-3).reverse();
 
   return (
-    <>
+    <div className="home-page">
       <Hero />
       
-      {/* Son Maç Sonuçları Bölümü */}
-      <section className="results-section container">
-        <h2 className="section-title">Son <span className="neon-text">Sonuçlar</span></h2>
-        <div className="results-grid">
-          {recentMatches.length > 0 ? recentMatches.map((match, idx) => (
-            <div key={idx} className="glass-card match-result-card">
-              <div className="match-date">
-                <Clock size={14} /> {new Date(match.date).toLocaleDateString('tr-TR')}
-              </div>
-              <div className="match-main">
-                <div className="m-team">{match.team1}</div>
-                <div className="m-score">{match.score1} - {match.score2}</div>
-                <div className="m-team">{match.team2}</div>
-              </div>
+      <section className="main-content container">
+        <div className="home-grid">
+          <div className="main-col">
+            <div className="section-header">
+              <h2 className="section-title"><Trophy className="neon-text" size={32} /> LİG <span className="gradient-text">TABLOSU</span></h2>
+              <NavLink to="/puan-durumu" className="view-all">Tümünü Gör <ArrowRight size={16} /></NavLink>
             </div>
-          )) : (
-            <div className="glass-card empty-results">
-              <p>Henüz oynanmış maç bulunmuyor. Ligin başlaması bekleniyor!</p>
+            <div className="glass-card standings-card">
+              <Standings limit={4} />
             </div>
-          )}
+          </div>
+
+          <aside className="side-col">
+            <div className="section-header">
+              <h2 className="section-title"><Calendar className="neon-text" size={32} /> SON <span className="gradient-text">SONUÇLAR</span></h2>
+            </div>
+            <div className="results-list">
+              {recentMatches.length > 0 ? recentMatches.map((match, idx) => (
+                <div key={idx} className="glass-card result-card">
+                  <div className="r-teams">
+                    <div className="r-team">
+                      <div className="r-logo">{match.team1[0]}</div>
+                      <span className="r-name">{match.team1}</span>
+                    </div>
+                    <div className="r-score-box">
+                      <span className="r-score">{match.score1}</span>
+                      <span className="r-divider">:</span>
+                      <span className="r-score">{match.score2}</span>
+                    </div>
+                    <div className="r-team">
+                      <div className="r-logo">{match.team2[0]}</div>
+                      <span className="r-name">{match.team2}</span>
+                    </div>
+                  </div>
+                </div>
+              )) : (
+                <div className="glass-card empty-results">
+                  <p>Henüz maç oynanmadı.</p>
+                </div>
+              )}
+            </div>
+          </aside>
         </div>
       </section>
 
-      <Standings />
-
-      <section className="news-section container">
-        <h2 className="section-title">Lig <span className="neon-text">Haberleri</span></h2>
-        <div className="news-grid">
-          <div className="glass-card news-card">
-            <div className="news-img-placeholder"></div>
-            <h3>Editör Lig Başlıyor!</h3>
-            <p>16 haftalık dev maraton için tüm hazırlıklar tamamlandı.</p>
-          </div>
-          <div className="glass-card news-card">
-            <div className="news-img-placeholder"></div>
-            <h3>Yeni Transfer Dönemi</h3>
-            <p>Takımlar kadrolarını güçlendirmek için çalışmalara başladı.</p>
-          </div>
+      <section className="quick-links container">
+        <div className="links-grid">
+          <NavLink to="/fikstur" className="glass-card link-card">
+            <Calendar size={40} className="neon-text" />
+            <h3>Fikstür</h3>
+            <p>Maç takvimini incele</p>
+          </NavLink>
+          <NavLink to="/oyuncular" className="glass-card link-card">
+            <Trophy size={40} className="neon-text" />
+            <h3>Oyuncular</h3>
+            <p>Ligdeki tüm yıldızlar</p>
+          </NavLink>
+          <NavLink to="/istatistikler" className="glass-card link-card">
+            <BarChart3 size={40} className="neon-text" />
+            <h3>Krallıklar</h3>
+            <p>Gol ve asist liderleri</p>
+          </NavLink>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

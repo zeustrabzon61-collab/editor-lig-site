@@ -1,51 +1,39 @@
 import React from 'react';
-import { PlayCircle, ShieldCheck } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { Play, MessageCircle, ChevronRight } from 'lucide-react';
 
 const Hero = () => {
-  const navigate = useNavigate();
-
   return (
     <section className="hero">
-      <div className="container hero-content">
-        <div className="hero-text-area">
-          <span className="badge">EDİTÖR LİG BAŞLIYOR</span>
-          <h1 className="hero-title">
-            REKABETİN YENİ ADRESİ: <span className="neon-text">EDİTÖR</span> LİG
-          </h1>
-          <p className="hero-description">
-            4 Dev takım, 16 Haftalık amansız mücadele. BAY FC, HAYAT OKULU FC, OOG FC 
-            ve ANTONY ULTRAS FC şampiyonluk için sahaya çıkıyor.
-          </p>
-          <div className="hero-btns">
-            <button className="btn-primary" onClick={() => navigate('/fikstur')}>
-              Fikstürü Gör <PlayCircle size={20} />
-            </button>
-            <a 
-              href="https://discord.gg/FzvUPzj3fU" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="btn-secondary"
-            >
-              Discord <ShieldCheck size={20} />
-            </a>
-          </div>
-        </div>
+      <div className="container">
+        <div className="hero-badge animate-float">EDİTÖR LİG BAŞLIYOR</div>
+        <h1 className="hero-title">REKABETİN <span className="gradient-text">YENİ DÜNYASI</span></h1>
+        <p className="hero-subtitle">
+          PSO liglerinin en prestijlisi. 4 Dev takım, 16 haftalık amansız mücadele ve tek bir şampiyon. 
+          Saha seni bekliyor.
+        </p>
         
-        <div className="hero-stats-preview glass-card">
-          <div className="stat-item">
-            <span className="stat-value">4</span>
-            <span className="stat-label">Takım</span>
+        <div className="hero-btns">
+          <NavLink to="/fikstur" className="btn-primary">
+            <Play size={20} fill="black" /> Fikstürü Gör
+          </NavLink>
+          <a href="https://discord.gg/FzvUPzj3fU" target="_blank" rel="noreferrer" className="btn-secondary">
+            <MessageCircle size={20} /> Topluluğa Katıl
+          </a>
+        </div>
+
+        <div className="hero-stats animate-fade-in">
+          <div className="h-stat-item">
+            <h3 className="neon-text">4</h3>
+            <p>Dev Takım</p>
           </div>
-          <div className="stat-divider"></div>
-          <div className="stat-item">
-            <span className="stat-value">16</span>
-            <span className="stat-label">Hafta</span>
+          <div className="h-stat-item">
+            <h3 className="neon-text">16</h3>
+            <p>Haftalık Lig</p>
           </div>
-          <div className="stat-divider"></div>
-          <div className="stat-item">
-            <span className="stat-value">32</span>
-            <span className="stat-label">Maç</span>
+          <div className="h-stat-item">
+            <h3 className="neon-text">32</h3>
+            <p>Büyük Maç</p>
           </div>
         </div>
       </div>
