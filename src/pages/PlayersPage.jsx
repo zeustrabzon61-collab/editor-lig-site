@@ -17,7 +17,7 @@ const PlayersPage = () => {
       
       <div className="players-search-wrapper">
         <div className="search-bar glass-card">
-          <Search size={20} className="text-secondary" />
+          <Search size={20} className="neon-text" />
           <input 
             type="text" 
             placeholder="Oyuncu veya takım ara..." 
