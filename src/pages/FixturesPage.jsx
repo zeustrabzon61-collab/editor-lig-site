@@ -1,3 +1,4 @@
+import React from 'react';
 import { getStorageData, cleanTeamName, getComments, addComment, getCurrentUser } from '../utils/storage';
 import { MessageSquare, Send, X, User } from 'lucide-react';
 
