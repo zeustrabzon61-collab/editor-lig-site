@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { processMatchJSON, getStorageData, saveStorageData } from '../utils/storage';
-import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList } from 'lucide-react';
+import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName } from '../utils/storage';
+import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList, Info } from 'lucide-react';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('json');
@@ -20,6 +20,10 @@ const AdminPanel = () => {
   });
 
   const [newStat, setNewStat] = useState({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'CM', goals: 0, assists: 0, saves: 0, tackles: 0 });
+  
+  const [showMapping, setShowMapping] = useState(false);
+  const [mappingData, setMappingData] = useState({ team1: '', team2: '', t1Original: '', t2Original: '' });
+  const [pendingJson, setPendingJson] = useState(null);
 
   const ADMIN_PASSWORD = 'Bulanahelalolsun611967';
 
@@ -60,13 +64,47 @@ const AdminPanel = () => {
   const handleJsonProcess = () => {
     try {
       if (!jsonInput.trim()) return;
-      processMatchJSON(jsonInput);
+      const match = JSON.parse(jsonInput);
+      
+      const checkTeam = (name) => {
+        const search = cleanTeamName(name);
+        return teams.find(t => {
+          const ex = cleanTeamName(t.name);
+          return ex === search || ex.includes(search) || search.includes(ex);
+        });
+      };
+
+      const t1Valid = checkTeam(match.team1Stats.teamName);
+      const t2Valid = checkTeam(match.team2Stats.teamName);
+
+      if (!t1Valid || !t2Valid) {
+        setPendingJson(match);
+        setMappingData({
+          t1Original: match.team1Stats.teamName,
+          t2Original: match.team2Stats.teamName,
+          team1: t1Valid ? t1Valid.name : teams[0].name,
+          team2: t2Valid ? t2Valid.name : teams[1].name
+        });
+        setShowMapping(true);
+        return;
+      }
+
+      processMatchJSON(match);
       setStatus({ type: 'success', message: 'JSON verileri başarıyla işlendi!' });
       setJsonInput('');
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
       setStatus({ type: 'error', message: 'Geçersiz JSON formatı!' });
     }
+  };
+
+  const confirmMapping = () => {
+    processMatchJSON(pendingJson, { team1: mappingData.team1, team2: mappingData.team2 });
+    setShowMapping(false);
+    setPendingJson(null);
+    setStatus({ type: 'success', message: 'Eşleştirme yapıldı ve maç kaydedildi!' });
+    setJsonInput('');
+    setTimeout(() => setStatus({ type: '', message: '' }), 3000);
   };
 
   const addPlayerStat = () => {
@@ -255,15 +293,42 @@ const AdminPanel = () => {
           )}
         </div>
         
-        <div className="glass-card">
-          <h3>Hızlı Eylemler</h3>
-          <div className="admin-actions">
-            <button className="btn-secondary" onClick={clearDatabase} style={{ color: '#ff4444', borderColor: 'rgba(255, 68, 68, 0.3)', width: '100%' }}>
-              <Trash2 size={18} /> Verileri Sıfırla
-            </button>
-          </div>
         </div>
       </div>
+
+      {showMapping && (
+        <div className="modal-overlay" onClick={() => setShowMapping(false)}>
+          <div className="glass-card modal-content" onClick={e => e.stopPropagation()}>
+            <div className="mapping-header">
+              <Info className="neon-text" size={32} />
+              <h3>Bilinmeyen Takım Tespit Edildi</h3>
+            </div>
+            <p style={{marginBottom: '2rem', color: 'var(--text-secondary)'}}>
+              JSON verisindeki takım isimleri ligdekilerle tam eşleşmedi. Lütfen doğruluğunu kontrol edin:
+            </p>
+
+            <div className="mapping-grid">
+              <div className="mapping-item">
+                <label>JSON'daki İsim: <strong>{mappingData.t1Original}</strong></label>
+                <select value={mappingData.team1} onChange={e => setMappingData({...mappingData, team1: e.target.value})}>
+                  {teams.map(t => <option key={t.name} value={t.name}>{t.name}</option>)}
+                </select>
+              </div>
+              <div className="mapping-item">
+                <label>JSON'daki İsim: <strong>{mappingData.t2Original}</strong></label>
+                <select value={mappingData.team2} onChange={e => setMappingData({...mappingData, team2: e.target.value})}>
+                  {teams.map(t => <option key={t.name} value={t.name}>{t.name}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="mapping-btns" style={{marginTop: '2rem', display: 'flex', gap: '1rem'}}>
+              <button className="btn-primary" onClick={confirmMapping} style={{flex: 1}}>Eşleştirmeyi Onayla</button>
+              <button className="btn-secondary" onClick={() => setShowMapping(false)}>İptal</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
