@@ -46,7 +46,7 @@ const Profile = () => {
             <div className="fifa-card-inner">
               <div className="fifa-card-top">
                 <div className="f-rating">{Math.min(99, 70 + (displayStats.goals * 2) + (displayStats.assists))}</div>
-                <div className="f-position">{displayStats.position || 'CM'}</div>
+                <div className="f-position">{user.position || displayStats.position || 'CM'}</div>
               </div>
               <div className="f-avatar-area" style={{ position: 'relative' }}>
                 {user.avatar ? (
@@ -61,7 +61,11 @@ const Profile = () => {
                 )}
               </div>
               <div className="f-info">
-                <div className="f-name">{displayStats.name}</div>
+                <div className="f-name">
+                  {user.jerseyNumber && <span style={{ opacity: 0.7, marginRight: '0.3rem' }}>#{user.jerseyNumber}</span>}
+                  {displayStats.name}
+                </div>
+                {user.psoId && <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', marginTop: '-0.3rem', marginBottom: '0.5rem' }}>ID: {user.psoId}</div>}
                 <div className="f-main-stats">
                   <div className="f-stat"><span>{displayStats.goals}</span> GOL</div>
                   <div className="f-stat"><span>{displayStats.assists}</span> AST</div>

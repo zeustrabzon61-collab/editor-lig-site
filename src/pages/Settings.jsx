@@ -7,6 +7,9 @@ const Settings = () => {
   const [avatar, setAvatar] = useState('');
   const [about, setAbout] = useState('');
   const [lookingForTeam, setLookingForTeam] = useState(false);
+  const [position, setPosition] = useState('');
+  const [psoId, setPsoId] = useState('');
+  const [jerseyNumber, setJerseyNumber] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [saved, setSaved] = useState(false);
 
@@ -19,11 +22,14 @@ const Settings = () => {
       setAvatar(currentUser.avatar || '');
       setAbout(currentUser.about || '');
       setLookingForTeam(currentUser.lookingForTeam || false);
+      setPosition(currentUser.position || '');
+      setPsoId(currentUser.psoId || '');
+      setJerseyNumber(currentUser.jerseyNumber || '');
     }
   }, []);
 
   const handleSave = () => {
-    const updates = { avatar, about, lookingForTeam };
+    const updates = { avatar, about, lookingForTeam, position, psoId, jerseyNumber };
     if (newPassword.trim()) {
       updates.password = newPassword.trim();
     }
@@ -40,8 +46,34 @@ const Settings = () => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatar(reader.result);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 250;
+          const MAX_HEIGHT = 250;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          setAvatar(canvas.toDataURL('image/jpeg', 0.8));
+        };
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -83,6 +115,42 @@ const Settings = () => {
               Yükle
               <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
             </label>
+          </div>
+          <small style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Büyük resimler otomatik olarak küçültülür.</small>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+          <div className="input-group-vertical">
+            <label>Mevki (Örn: ST, CM)</label>
+            <input 
+              type="text" 
+              placeholder="CM" 
+              maxLength="3"
+              value={position} 
+              onChange={e => setPosition(e.target.value.toUpperCase())} 
+              style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
+            />
+          </div>
+          <div className="input-group-vertical">
+            <label>Forma No</label>
+            <input 
+              type="number" 
+              placeholder="10" 
+              min="1" max="99"
+              value={jerseyNumber} 
+              onChange={e => setJerseyNumber(e.target.value)} 
+              style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
+            />
+          </div>
+          <div className="input-group-vertical">
+            <label>PSO ID (Steam)</label>
+            <input 
+              type="text" 
+              placeholder="SteamID64" 
+              value={psoId} 
+              onChange={e => setPsoId(e.target.value)} 
+              style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
+            />
           </div>
         </div>
 
