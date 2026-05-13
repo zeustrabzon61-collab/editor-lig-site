@@ -145,6 +145,12 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   const matchAssists = [];
 
   allPlayerStats.forEach(ps => {
+    // Bütün olası PSO hatalarını ve büyük/küçük harf durumlarını kapsayalım
+    const extractField = (fieldNames) => {
+      const key = Object.keys(ps).find(k => fieldNames.includes(k.toLowerCase()));
+      return key ? ps[key] : '';
+    };
+
     const goals = parseInt(extractField(['goals', 'goal', 'g']) || 0);
     const assists = parseInt(extractField(['assists', 'assist', 'a']) || 0);
 
@@ -153,11 +159,6 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
 
     let player = players.find(p => p.name.toLowerCase() === ps.playerName.toLowerCase());
     
-    // Bütün olası PSO hatalarını ve büyük/küçük harf durumlarını kapsayalım
-    const extractField = (fieldNames) => {
-      const key = Object.keys(ps).find(k => fieldNames.includes(k.toLowerCase()));
-      return key ? ps[key] : '';
-    };
 
     const rawPos = String(extractField(['position', 'postion', 'pos'])).toUpperCase();
     const rawId = String(extractField(['playerid', 'steamid', 'psoid', 'id']));
