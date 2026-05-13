@@ -100,7 +100,16 @@ const FixturesPage = () => {
                     <img src={getLogo(match.team1)} alt="" className="fixture-logo" onError={(e) => e.target.style.display = 'none'} style={{ margin: 0 }} />
                   </div>
                   
-                  <div className="match-score" style={{ flex: '0 0 80px', fontSize: match.played ? '1.5rem' : '1.2rem', color: match.played ? '#00ffcc' : 'var(--text-secondary)' }}>
+                  <div className="match-score" style={{ 
+                    flex: '0 0 80px', 
+                    height: '40px',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    fontSize: match.played ? '1.5rem' : '1.2rem', 
+                    color: match.played ? '#ffffff' : 'var(--text-secondary)',
+                    borderRadius: '8px'
+                  }}>
                     {match.played ? `${match.score1} - ${match.score2}` : 'VS'}
                   </div>
                   
