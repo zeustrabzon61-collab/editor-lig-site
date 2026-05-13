@@ -103,12 +103,19 @@ button {
 }
 
 .logo-hover-effect:hover {
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 15px var(--accent-primary));
+  transform: translateY(-1px);
 }
 
 .logo-hover-effect:hover .logo-text {
-  text-shadow: 0 0 10px #fff, 0 0 20px var(--accent-primary);
+  color: #fff;
+  text-shadow: 
+    0 0 7px rgba(255, 255, 255, 0.3),
+    0 0 15px var(--accent-primary);
+  letter-spacing: 3px;
+}
+
+.logo-hover-effect:hover .neon-text {
+  filter: brightness(1.2) drop-shadow(0 0 10px var(--accent-primary));
 }
 
 .logo-text {

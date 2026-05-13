@@ -238,13 +238,13 @@ const FixturesPage = () => {
                 {/* Score (Center) */}
                 <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <div style={{ 
-                    fontSize: '4.5rem', fontWeight: '900', color: '#fff', 
-                    textShadow: '0 0 30px rgba(0, 242, 255, 0.5)', 
-                    lineHeight: 1, fontStyle: 'italic',
-                    display: 'flex', alignItems: 'center', gap: '8px'
+                    fontSize: '5rem', fontWeight: '900', color: '#fff', 
+                    textShadow: '0 0 30px rgba(0, 242, 255, 0.4)', 
+                    lineHeight: 1,
+                    display: 'flex', alignItems: 'center', gap: '15px'
                   }}>
                     <span>{selectedMatch.score1}</span>
-                    <span style={{ color: 'var(--accent-primary)', fontSize: '2rem', fontStyle: 'normal' }}>-</span>
+                    <span style={{ color: 'var(--accent-primary)', fontSize: '2.5rem', fontWeight: '400', opacity: 0.8 }}>-</span>
                     <span>{selectedMatch.score2}</span>
                   </div>
                 </div>
