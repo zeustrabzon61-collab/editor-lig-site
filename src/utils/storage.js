@@ -151,10 +151,6 @@ export const updateUserProfile = (psoUsername, updates) => {
   return false;
 };
 
-export const logoutUser = () => {
-  localStorage.removeItem('pso_current_user');
-};
-
 export const cleanTeamName = (n) => n.toUpperCase().replace(/\s+FC$|\s+F\.C\.$/g, '').trim();
 
 export const processMatchJSON = (jsonData, teamMappings = {}) => {
