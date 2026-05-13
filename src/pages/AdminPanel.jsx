@@ -268,6 +268,9 @@ const AdminPanel = () => {
         <button className={activeTab === 'totw' ? 'active' : ''} onClick={() => setActiveTab('totw')}>
           <RefreshCw size={18} /> Haftanın Takımı
         </button>
+        <button className={activeTab === 'sync' ? 'active' : ''} onClick={() => setActiveTab('sync')}>
+          <Upload size={18} /> Bulut Senkronize
+        </button>
       </div>
       
       <div className="admin-grid">
@@ -318,6 +321,21 @@ const AdminPanel = () => {
 
               <button className="btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={handleSaveTOTW}>
                 <Save size={20} /> Kadroyu Kaydet
+              </button>
+            </div>
+          ) : activeTab === 'sync' ? (
+            <div className="sync-admin" style={{ textAlign: 'center', padding: '2rem' }}>
+              <div style={{ marginBottom: '2rem' }}>
+                <RefreshCw size={60} className="neon-text" style={{ marginBottom: '1rem' }} />
+                <h3>Veri Senkronizasyonu</h3>
+                <p style={{ opacity: 0.7 }}>Yerel tarayıcınızdaki tüm lig verilerini (puan durumu, oyuncular, maçlar) buluta göndererek tüm kullanıcılar için güncellenmesini sağlar.</p>
+              </div>
+              <button className="btn-primary" style={{ width: '100%', padding: '1.5rem' }} onClick={() => {
+                const data = getStorageData();
+                saveStorageData(data);
+                alert('Tüm veriler başarıyla buluta gönderildi! Artık herkes güncel veriyi görecek.');
+              }}>
+                <Upload size={20} /> Verileri Buluta Gönder
               </button>
             </div>
           ) : (

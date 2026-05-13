@@ -8,9 +8,7 @@ const INITIAL_TEAMS = [
 const INITIAL_PLAYERS = [];
 const INITIAL_MATCHES = [];
 
-// HERKES İÇİN ORTAK BULUT KANALI
-// Bu bucket ID sitemizin ana veritabanı görevi görür.
-const CLOUD_STORAGE_URL = "https://kvdb.io/Tz9Kj8y1Z5m2p1X5m2p1/pso_league_v2";
+const CLOUD_STORAGE_URL = "https://kvdb.io/Tz9Kj8y1Z5m2p1X5m2p1/pso_league_site_final";
 
 export const getStorageData = () => {
   const teamsStr = localStorage.getItem('pso_teams_v2');
@@ -36,6 +34,9 @@ export const saveStorageData = (data) => {
   if (data.matches) localStorage.setItem('pso_matches_v2', JSON.stringify(data.matches));
   if (data.users) localStorage.setItem('pso_users_v3', JSON.stringify(data.users));
   
+  // Bileşenleri hemen bilgilendir
+  window.dispatchEvent(new Event('storage'));
+  
   // Buluta Push et
   syncToCloud(data);
 };
@@ -52,9 +53,9 @@ const syncToCloud = async (data) => {
             players: data.players || current.players,
             matches: data.matches || current.matches,
             users: data.users || current.users,
-            comments: data.comments || (comments ? JSON.parse(comments) : {}),
-            chat: data.chat || (chat ? JSON.parse(chat) : []),
-            totw: data.totw || (totw ? JSON.parse(totw) : {})
+            comments: comments ? JSON.parse(comments) : {},
+            chat: chat ? JSON.parse(chat) : [],
+            totw: totw ? JSON.parse(totw) : {}
         };
 
         await fetch(CLOUD_STORAGE_URL, {
