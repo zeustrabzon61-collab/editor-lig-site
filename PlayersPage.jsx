@@ -1,12 +1,43 @@
 import React, { useState } from 'react';
 import { getStorageData } from '../utils/storage';
-import { User, Search } from 'lucide-react';
+import { User, Search, X, Trophy, Target, Shield, Zap } from 'lucide-react';
+
+const PlayerCard = ({ player, onClick }) => {
+  return (
+    <div className="fifa-card-container animate-fade-in" onClick={() => onClick(player)}>
+      <div className="fifa-card">
+        <div className="fifa-card-inner">
+          <div className="fifa-card-top">
+            <div className="f-rating">{Math.min(99, 70 + (player.goals * 2) + (player.assists))}</div>
+            <div className="f-position">{player.position || 'ST'}</div>
+          </div>
+          <div className="f-avatar-area">
+            <User size={80} strokeWidth={1} />
+          </div>
+          <div className="f-info">
+            <div className="f-name">{player.name}</div>
+            <div className="f-main-stats">
+              <div className="f-stat"><span>{player.goals}</span> GOL</div>
+              <div className="f-stat"><span>{player.assists}</span> AST</div>
+              <div className="f-stat"><span>{player.matches}</span> MAÇ</div>
+            </div>
+            <div className="f-badges">
+              <span className="f-team-name">{player.team}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="fifa-card-glow"></div>
+    </div>
+  );
+};
 
 const PlayersPage = () => {
   const { players, teams } = getStorageData();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('All');
   const [selectedPosition, setSelectedPosition] = useState('All');
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   const positions = ['GK', 'DEF', 'MID', 'ATT'];
 
@@ -56,34 +87,82 @@ const PlayersPage = () => {
 
       <div className="players-list-grid">
         {filteredPlayers.length > 0 ? filteredPlayers.map((player, idx) => (
-          <div key={idx} className="glass-card player-item-card">
-            <div className="p-avatar">
-              <User size={32} />
-            </div>
-            <div className="p-info">
-              <h4>{player.name}</h4>
-              <div className="p-badges">
-                <span className="p-team-badge">{player.team}</span>
-                {player.position && <span className="p-pos-badge">{player.position}</span>}
-              </div>
-            </div>
-            <div className="p-stats-summary">
-              <div className="s-item">
-                <span className="s-val">{player.matches}</span>
-                <span className="s-lbl">Maç</span>
-              </div>
-              <div className="s-item">
-                <span className="s-val">{player.goals}</span>
-                <span className="s-lbl">Gol</span>
-              </div>
-            </div>
-          </div>
+          <PlayerCard key={idx} player={player} onClick={setSelectedPlayer} />
         )) : (
           <div className="empty-state">
-            <p>{searchTerm ? 'Aramanızla eşleşen oyuncu bulunamadı.' : 'Henüz ligde kayıtlı oyuncu yok. Maç verisi girerek oyuncu ekleyebilirsiniz.'}</p>
+            <p>{searchTerm ? 'Aramanızla eşleşen oyuncu bulunamadı.' : 'Henüz ligde kayıtlı oyuncu yok.'}</p>
           </div>
         )}
       </div>
+
+      {selectedPlayer && (
+        <div className="modal-overlay" onClick={() => setSelectedPlayer(null)}>
+          <div className="glass-card modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setSelectedPlayer(null)}><X /></button>
+            
+            <div className="modal-header">
+              <div className="m-avatar"><User size={64} /></div>
+              <div className="m-title">
+                <h2>{selectedPlayer.name}</h2>
+                <span className="p-team-badge">{selectedPlayer.team}</span>
+              </div>
+            </div>
+
+            <div className="modal-body">
+              <div className="m-info-grid">
+                <div className="m-info-item">
+                  <label>PSO ID</label>
+                  <span>#{selectedPlayer.psoId || 'Belirtilmedi'}</span>
+                </div>
+                <div className="m-info-item">
+                  <label>Forma No</label>
+                  <span>{selectedPlayer.shirtNumber || '--'}</span>
+                </div>
+                <div className="m-info-item">
+                  <label>Mevki</label>
+                  <span>{selectedPlayer.position || 'ATT'}</span>
+                </div>
+              </div>
+
+              <div className="m-stats-grid">
+                <div className="m-stat-box">
+                  <Target className="neon-text" />
+                  <div className="m-stat-data">
+                    <span className="m-val">{selectedPlayer.goals}</span>
+                    <span className="m-lbl">Gol</span>
+                  </div>
+                </div>
+                <div className="m-stat-box">
+                  <Zap className="neon-text" />
+                  <div className="m-stat-data">
+                    <span className="m-val">{selectedPlayer.assists}</span>
+                    <span className="m-lbl">Asist</span>
+                  </div>
+                </div>
+                <div className="m-stat-box">
+                  <Shield className="neon-text" />
+                  <div className="m-stat-data">
+                    <span className="m-val">{selectedPlayer.tackles || 0}</span>
+                    <span className="m-lbl">Tackle</span>
+                  </div>
+                </div>
+                <div className="m-stat-box">
+                  <Trophy className="neon-text" />
+                  <div className="m-stat-data">
+                    <span className="m-val">{selectedPlayer.saves || 0}</span>
+                    <span className="m-lbl">Kurtarış</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="m-footer-stats">
+                <div className="f-stat-pill">Oynanan Maç: {selectedPlayer.matches}</div>
+                <div className="f-stat-pill">Top Çalma: {selectedPlayer.interceptions || 0}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

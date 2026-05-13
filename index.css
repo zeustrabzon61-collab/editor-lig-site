@@ -850,3 +850,308 @@ body {
   .home-grid { grid-template-columns: 1fr; }
   .hero-stats { gap: 2rem; flex-wrap: wrap; }
 }
+
+/* FIFA Card Styles */
+.fifa-card-container {
+  position: relative;
+  width: 260px;
+  height: 380px;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin: 0 auto;
+}
+
+.fifa-card-container:hover {
+  transform: scale(1.05) rotateY(10deg);
+}
+
+.fifa-card {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e5c06d 0%, #b8860b 50%, #8b6508 100%);
+  clip-path: polygon(10% 0, 90% 0, 100% 15%, 100% 85%, 50% 100%, 0 85%, 0 15%);
+  padding: 4px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+
+.fifa-card-inner {
+  width: 100%;
+  height: 100%;
+  background: #111;
+  clip-path: polygon(10% 0, 90% 0, 100% 15%, 100% 85%, 50% 100%, 0 85%, 0 15%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.fifa-card-inner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'), 
+              radial-gradient(circle at 50% 30%, rgba(184, 134, 11, 0.2), transparent);
+  opacity: 0.5;
+}
+
+.fifa-card-top {
+  position: absolute;
+  top: 40px;
+  left: 25px;
+  text-align: center;
+}
+
+.f-rating {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #e5c06d;
+  line-height: 1;
+}
+
+.f-position {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #e5c06d;
+  border-top: 1px solid rgba(229, 192, 109, 0.3);
+  margin-top: 2px;
+  padding-top: 2px;
+}
+
+.f-avatar-area {
+  margin-top: 40px;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(229, 192, 109, 0.1), transparent);
+  border-radius: 50%;
+  color: #e5c06d;
+  position: relative;
+  z-index: 3;
+}
+
+.f-info {
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 3;
+}
+
+.f-name {
+  font-size: 1.4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #e5c06d;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(229, 192, 109, 0.2);
+  display: inline-block;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.f-main-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.f-stat {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: rgba(229, 192, 109, 0.6);
+}
+
+.f-stat span {
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.f-badges {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.f-team-name {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #e5c06d;
+  text-transform: uppercase;
+  background: rgba(229, 192, 109, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.fifa-card-glow {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at 50% 50%, rgba(184, 134, 11, 0.3), transparent 70%);
+  filter: blur(20px);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fifa-card-container:hover .fifa-card-glow {
+  opacity: 1;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  padding: 3rem !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 50px rgba(0, 242, 255, 0.2) !important;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.modal-close:hover { color: var(--accent-primary); }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.m-avatar {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+.m-title h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.m-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem;
+  border-radius: 15px;
+}
+
+.m-info-item label {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+
+.m-info-item span {
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--accent-primary);
+}
+
+.m-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.m-stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid var(--glass-border);
+}
+
+.m-stat-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.m-val {
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.m-lbl {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+.m-footer-stats {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.f-stat-pill {
+  background: rgba(0, 242, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+}
+
+.full-width {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 600px) {
+  .modal-content { padding: 1.5rem !important; }
+  .modal-header { flex-direction: column; text-align: center; }
+  .m-info-grid { grid-template-columns: 1fr; }
+  .m-stats-grid { grid-template-columns: 1fr; }
+}
+

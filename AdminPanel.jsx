@@ -19,7 +19,7 @@ const AdminPanel = () => {
     playerStats: []
   });
 
-  const [newStat, setNewStat] = useState({ playerName: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
+  const [newStat, setNewStat] = useState({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
 
   const ADMIN_PASSWORD = 'Bulanahelalolsun611967';
 
@@ -78,7 +78,7 @@ const AdminPanel = () => {
       ...prev,
       playerStats: [...prev.playerStats, { ...newStat }]
     }));
-    setNewStat({ playerName: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
+    setNewStat({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
   };
 
   const handleManualSave = () => {
@@ -108,12 +108,14 @@ const AdminPanel = () => {
       manualMatch.playerStats.forEach(ps => {
         let p = players.find(player => player.name === ps.playerName);
         if (!p) {
-          p = { name: ps.playerName, team: ps.team, position: ps.position, goals: 0, assists: 0, saves: 0, tackles: 0, interceptions: 0, matches: 0 };
+          p = { name: ps.playerName, psoId: ps.psoId, shirtNumber: ps.shirtNumber, team: ps.team, position: ps.position, goals: 0, assists: 0, saves: 0, tackles: 0, interceptions: 0, matches: 0 };
           players.push(p);
         } else {
-          // Pozisyonu güncelle (opsiyonel)
           p.position = ps.position;
+          if (ps.psoId) p.psoId = ps.psoId;
+          if (ps.shirtNumber) p.shirtNumber = ps.shirtNumber;
         }
+
 
         p.matches += 1;
         p.goals += Number(ps.goals);
@@ -209,8 +211,10 @@ const AdminPanel = () => {
               </div>
 
               <h4 style={{marginTop: '2rem'}}>Oyuncu İstatistikleri Ekle</h4>
-              <div className="player-stat-input-grid">
+              <div className="player-stat-input-grid full-width">
                 <input type="text" placeholder="Oyuncu Adı" value={newStat.playerName} onChange={e => setNewStat({...newStat, playerName: e.target.value})} />
+                <input type="text" placeholder="PSO ID" value={newStat.psoId} onChange={e => setNewStat({...newStat, psoId: e.target.value})} />
+                <input type="text" placeholder="Forma No" value={newStat.shirtNumber} onChange={e => setNewStat({...newStat, shirtNumber: e.target.value})} />
                 <select value={newStat.team} onChange={e => setNewStat({...newStat, team: e.target.value})}>
                   <option value="">Takım Seç...</option>
                   <option value={manualMatch.team1}>{manualMatch.team1}</option>
