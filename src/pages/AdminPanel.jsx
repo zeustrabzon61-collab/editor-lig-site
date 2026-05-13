@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName, resetAllData, initCloudSync } from '../utils/storage';
+import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName, resetAllData, initCloudSync, saveTOTW, getTOTW } from '../utils/storage';
 import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList, Info, RefreshCw } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -10,6 +10,12 @@ const AdminPanel = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [teams, setTeams] = useState([]);
+  const [players, setPlayers] = useState([]);
+
+  const [totwWeek, setTotwWeek] = useState(1);
+  const [totwSelection, setTotwSelection] = useState({
+    GK: '', LB: '', RB: '', CM: '', LW: '', RW: ''
+  });
 
   const [manualMatch, setManualMatch] = useState({
     team1: '',
@@ -34,6 +40,7 @@ const AdminPanel = () => {
     
     const data = getStorageData();
     setTeams(data.teams || []);
+    setPlayers(data.players || []);
     if (data.teams && data.teams.length >= 2) {
       setManualMatch(prev => ({
         ...prev,
@@ -42,6 +49,15 @@ const AdminPanel = () => {
       }));
     }
   }, []);
+
+  useEffect(() => {
+    const existing = getTOTW(totwWeek);
+    if (existing) {
+      setTotwSelection(existing);
+    } else {
+      setTotwSelection({ GK: '', LB: '', RB: '', CM: '', LW: '', RW: '' });
+    }
+  }, [totwWeek]);
 
   const handleLogin = (e) => {
     if (e) e.preventDefault();
@@ -203,6 +219,12 @@ const AdminPanel = () => {
     setTimeout(() => setStatus({ type: '', message: '' }), 3000);
   };
 
+  const handleSaveTOTW = () => {
+    saveTOTW(totwWeek, totwSelection);
+    setStatus({ type: 'success', message: `${totwWeek}. Hafta kadrosu kaydedildi!` });
+    setTimeout(() => setStatus({ type: '', message: '' }), 3000);
+  };
+
   const clearDatabase = () => {
     if (window.confirm('Verileri sıfırlamak istediğinize emin misiniz? Puan durumu ve tüm istatistikler silinecektir.')) {
       resetAllData();
@@ -243,6 +265,9 @@ const AdminPanel = () => {
         <button className={activeTab === 'manual' ? 'active' : ''} onClick={() => setActiveTab('manual')}>
           <Plus size={18} /> Elle Giriş Yap
         </button>
+        <button className={activeTab === 'totw' ? 'active' : ''} onClick={() => setActiveTab('totw')}>
+          <RefreshCw size={18} /> Haftanın Takımı
+        </button>
       </div>
       
       <div className="admin-grid">
@@ -254,6 +279,45 @@ const AdminPanel = () => {
               <textarea className="admin-textarea" placeholder='{"team1Stats": ...}' value={jsonInput} onChange={(e) => setJsonInput(e.target.value)}></textarea>
               <button className="btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={handleJsonProcess}>
                 <Upload size={20} /> Maçı İşle
+              </button>
+            </div>
+          ) : activeTab === 'totw' ? (
+            <div className="totw-admin">
+              <h3>Haftanın Takımını Seç</h3>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label>Hafta Seç:</label>
+                <select value={totwWeek} onChange={e => setTotwWeek(Number(e.target.value))} className="admin-input">
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map(w => (
+                    <option key={w} value={w}>{w}. Hafta</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="player-stat-input-grid" style={{ gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
+                {Object.keys(totwSelection).map(pos => (
+                  <React.Fragment key={pos}>
+                    <div style={{ alignSelf: 'center', fontWeight: 'bold' }}>{pos}:</div>
+                    <select 
+                      value={totwSelection[pos]} 
+                      onChange={e => setTotwSelection({...totwSelection, [pos]: e.target.value})}
+                      className="admin-input"
+                    >
+                      <option value="">Oyuncu Seç...</option>
+                      {players.filter(p => {
+                        if (pos === 'GK') return p.position === 'GK';
+                        if (['LB', 'RB'].includes(pos)) return p.position.includes('B') || p.position.includes('DEF');
+                        if (pos === 'CM') return p.position.includes('CM') || p.position.includes('MID');
+                        return true;
+                      }).map(p => (
+                        <option key={p.name} value={p.name}>{p.name} ({p.team})</option>
+                      ))}
+                    </select>
+                  </React.Fragment>
+                ))}
+              </div>
+
+              <button className="btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={handleSaveTOTW}>
+                <Save size={20} /> Kadroyu Kaydet
               </button>
             </div>
           ) : (

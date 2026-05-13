@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { getStorageData } from '../utils/storage';
+import React, { useState, useEffect } from 'react';
+import { getStorageData, getTOTW } from '../utils/storage';
 
 const TeamOfTheWeek = () => {
   const [selectedWeek, setSelectedWeek] = useState(1);
+  const [manualTotw, setManualTotw] = useState(null);
   const { players, matches: storedMatches } = getStorageData();
+
+  useEffect(() => {
+    const manual = getTOTW(selectedWeek);
+    setManualTotw(manual);
+  }, [selectedWeek]);
   
   // Haftada 2 maç olduğu varsayımıyla (4 takım)
   const weekMatches = storedMatches.slice((selectedWeek - 1) * 2, selectedWeek * 2);
@@ -17,11 +23,16 @@ const TeamOfTheWeek = () => {
     }
   });
 
-  const getTopPlayerByPos = (posFilter) => {
-    // Önce bu haftanın performanslarına bak
+  const getTopPlayerByPos = (posFilter, posKey) => {
+    // 1. Manuel seçim varsa onu kullan
+    if (manualTotw && manualTotw[posKey]) {
+      const p = players.find(player => player.name === manualTotw[posKey]);
+      if (p) return p;
+      return { name: manualTotw[posKey], team: 'Bilinmiyor', position: posKey };
+    }
+
+    // 2. Yoksa otomatik hesapla
     let pool = weekPerformances.filter(p => posFilter.includes(p.position));
-    
-    // Eğer bu hafta o mevkide kimse yoksa (eski veri durumu), genel listeye bak (fallback)
     if (pool.length === 0) {
       pool = players.filter(p => posFilter.includes(p.position));
     }
@@ -36,12 +47,12 @@ const TeamOfTheWeek = () => {
   };
 
   const totw = {
-    GK: getTopPlayerByPos(['GK']),
-    LB: getTopPlayerByPos(['LB', 'LWB', 'DEF']),
-    RB: getTopPlayerByPos(['RB', 'RWB', 'DEF']),
-    CM: getTopPlayerByPos(['CM', 'CDM', 'CAM', 'MID']),
-    LW: getTopPlayerByPos(['LW', 'LM', 'ATT']),
-    RW: getTopPlayerByPos(['RW', 'RM', 'ATT'])
+    GK: getTopPlayerByPos(['GK'], 'GK'),
+    LB: getTopPlayerByPos(['LB', 'LWB', 'DEF'], 'LB'),
+    RB: getTopPlayerByPos(['RB', 'RWB', 'DEF'], 'RB'),
+    CM: getTopPlayerByPos(['CM', 'CDM', 'CAM', 'MID'], 'CM'),
+    LW: getTopPlayerByPos(['LW', 'LM', 'ATT'], 'LW'),
+    RW: getTopPlayerByPos(['RW', 'RM', 'ATT'], 'RW')
   };
 
   // Eğer aynı oyuncu iki defa gelirse engellemek için basit bir hack yapılabilir ama demo için sorun değil.

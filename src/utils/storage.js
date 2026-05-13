@@ -390,3 +390,18 @@ export const resetAllData = async () => {
       body: JSON.stringify(emptyData)
   });
 };
+
+export const saveTOTW = (week, totw) => {
+  const totwStr = localStorage.getItem('pso_totw_v1');
+  const allTotw = totwStr ? JSON.parse(totwStr) : {};
+  allTotw[week] = totw;
+  localStorage.setItem('pso_totw_v1', JSON.stringify(allTotw));
+  syncToCloud({ totw: allTotw });
+};
+
+export const getTOTW = (week) => {
+  const totwStr = localStorage.getItem('pso_totw_v1');
+  if (!totwStr) return null;
+  const allTotw = JSON.parse(totwStr);
+  return allTotw[week] || null;
+};
