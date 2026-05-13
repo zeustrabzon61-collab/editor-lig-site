@@ -8,6 +8,9 @@ import AdminPanel from './pages/AdminPanel';
 import Leaderboards from './pages/Leaderboards';
 import PlayersPage from './pages/PlayersPage';
 
+import Auth from './pages/Auth';
+import Profile from './pages/Profile';
+
 function App() {
   return (
     <Router>
@@ -21,6 +24,8 @@ function App() {
             <Route path="/istatistikler" element={<Leaderboards />} />
             <Route path="/oyuncular" element={<PlayersPage />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/takimlar" element={<div className="container page-container"><h2 className="section-title">Takımlar</h2><p>Pek yakında...</p></div>} />
           </Routes>
         </main>

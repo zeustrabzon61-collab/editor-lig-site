@@ -10,6 +10,7 @@ export const getStorageData = () => {
   const teamsStr = localStorage.getItem('pso_teams');
   const players = localStorage.getItem('pso_players');
   const matches = localStorage.getItem('pso_matches');
+  const users = localStorage.getItem('pso_users');
 
   let teams = teamsStr ? JSON.parse(teamsStr) : INITIAL_TEAMS;
 
@@ -22,10 +23,10 @@ export const getStorageData = () => {
     return t;
   });
 
-  return {
     teams,
     players: players ? JSON.parse(players) : [],
     matches: matches ? JSON.parse(matches) : [],
+    users: users ? JSON.parse(users) : [],
   };
 };
 
@@ -33,6 +34,58 @@ export const saveStorageData = (data) => {
   if (data.teams) localStorage.setItem('pso_teams', JSON.stringify(data.teams));
   if (data.players) localStorage.setItem('pso_players', JSON.stringify(data.players));
   if (data.matches) localStorage.setItem('pso_matches', JSON.stringify(data.matches));
+  if (data.users) localStorage.setItem('pso_users', JSON.stringify(data.users));
+};
+
+export const getCurrentUser = () => {
+  const user = localStorage.getItem('pso_current_user');
+  return user ? JSON.parse(user) : null;
+};
+
+export const loginUser = (email, password) => {
+  const { users } = getStorageData();
+  const user = users.find(u => u.email === email && u.password === password);
+  if (user) {
+    localStorage.setItem('pso_current_user', JSON.stringify(user));
+    return { success: true, user };
+  }
+  return { success: false, message: 'E-posta veya şifre hatalı!' };
+};
+
+export const registerUser = (email, psoUsername, password) => {
+  const data = getStorageData();
+  if (data.users.find(u => u.email === email)) return { success: false, message: 'Bu e-posta zaten kayıtlı!' };
+  if (data.users.find(u => u.psoUsername.toLowerCase() === psoUsername.toLowerCase())) return { success: false, message: 'Bu PSO kullanıcı adı alınmış!' };
+
+  const newUser = {
+    email,
+    psoUsername,
+    password,
+    avatar: '',
+    about: '',
+    lookingForTeam: false
+  };
+
+  data.users.push(newUser);
+  saveStorageData(data);
+  localStorage.setItem('pso_current_user', JSON.stringify(newUser));
+  return { success: true, user: newUser };
+};
+
+export const updateUserProfile = (psoUsername, updates) => {
+  const data = getStorageData();
+  const userIndex = data.users.findIndex(u => u.psoUsername === psoUsername);
+  if (userIndex !== -1) {
+    data.users[userIndex] = { ...data.users[userIndex], ...updates };
+    saveStorageData(data);
+    localStorage.setItem('pso_current_user', JSON.stringify(data.users[userIndex]));
+    return true;
+  }
+  return false;
+};
+
+export const logoutUser = () => {
+  localStorage.removeItem('pso_current_user');
 };
 
 export const cleanTeamName = (n) => n.toUpperCase().replace(/\s+FC$|\s+F\.C\.$/g, '').trim();

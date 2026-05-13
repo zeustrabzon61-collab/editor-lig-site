@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Trophy, Users, Calendar, BarChart3, Home, Menu, Settings, User, LayoutDashboard } from 'lucide-react';
 
+import { getCurrentUser } from '../utils/storage';
+
 const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   // Giriş durumunu kontrol et
@@ -11,12 +14,11 @@ const Navbar = () => {
     const checkAuth = () => {
       const auth = localStorage.getItem('pso_admin_auth');
       setIsAdmin(auth === 'true');
+      setUser(getCurrentUser());
     };
 
     checkAuth();
-    // Storage değişikliklerini dinle (farklı sekmeler için)
     window.addEventListener('storage', checkAuth);
-    // Sayfa içi değişiklikleri yakalamak için interval (basit çözüm)
     const interval = setInterval(checkAuth, 1000);
 
     return () => {
@@ -62,13 +64,23 @@ const Navbar = () => {
         </ul>
 
         <div className="nav-actions">
+          {user ? (
+            <button className="btn-secondary" onClick={() => navigate('/profile')} style={{ padding: '0.5rem 1rem' }}>
+              <User size={18} /> Profil
+            </button>
+          ) : (
+            <button className="btn-login" onClick={() => navigate('/auth')}>
+              Kayıt / Giriş
+            </button>
+          )}
+
           {isAdmin ? (
             <button className="btn-login" onClick={() => navigate('/admin')}>
               <LayoutDashboard size={18} /> Panel
             </button>
           ) : (
-            <button className="btn-login" onClick={() => navigate('/admin')}>
-              Giriş Yap
+            <button className="btn-secondary" style={{ background: 'transparent' }} onClick={() => navigate('/admin')}>
+              <Settings size={18} />
             </button>
           )}
           <Menu className="mobile-menu-icon" size={24} />
