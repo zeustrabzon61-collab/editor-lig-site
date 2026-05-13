@@ -15,32 +15,48 @@ const TeamOfTheWeek = () => {
   const weekMatches = storedMatches.slice((selectedWeek - 1) * 2, selectedWeek * 2);
   const isPlayed = weekMatches.length > 0;
 
-  // Haftalık maçlardan oyuncu performanslarını topla
-  const weekPerformances = [];
-  weekMatches.forEach(m => {
-    if (m.playerStats) {
-      weekPerformances.push(...m.playerStats);
-    }
-  });
+  // Haftalık maçlardan oyuncu performanslarını topla ve aynı isimleri birleştir
+  const getWeekStandings = () => {
+    const playerMap = {};
+    
+    weekMatches.forEach(m => {
+      if (m.playerStats) {
+        m.playerStats.forEach(ps => {
+          if (!playerMap[ps.name]) {
+            playerMap[ps.name] = { ...ps, totalScore: 0 };
+          } else {
+            playerMap[ps.name].goals += ps.goals;
+            playerMap[ps.name].assists += ps.assists;
+            playerMap[ps.name].saves += ps.saves;
+            playerMap[ps.name].tackles += ps.tackles;
+            playerMap[ps.name].interceptions += ps.interceptions;
+          }
+          // Oyun içi Score değerini kullan (Sum of week scores)
+          playerMap[ps.name].totalScore += (ps.score || 0);
+        });
+      }
+    });
+    
+    return Object.values(playerMap);
+  };
+
+  const weekPlayers = getWeekStandings();
 
   const getTopPlayerByPos = (posFilter, posKey) => {
-    // 1. Manuel seçim varsa onu kullan
+    // 1. Manuel seçim varsa onu kullan (Senin seçimin her zaman öncelikli)
     if (manualTotw && manualTotw[posKey]) {
       const p = players.find(player => player.name === manualTotw[posKey]);
       if (p) return p;
       return { name: manualTotw[posKey], team: 'Bilinmiyor', position: posKey };
     }
 
-    // 2. Yoksa otomatik hesapla
-    let pool = weekPerformances.filter(p => posFilter.includes(p.position));
-
+    // 2. Otomatik en yüksek puanı hesapla
+    let pool = weekPlayers.filter(p => posFilter.includes(p.position));
+    
     if (pool.length === 0) return { name: 'Seçilmedi', team: '-', position: posFilter[0] };
     
-    return pool.sort((a, b) => {
-      const scoreA = (a.goals * 3) + (a.assists * 2) + (a.saves * 3) + (a.tackles * 1.5) + a.interceptions;
-      const scoreB = (b.goals * 3) + (b.assists * 2) + (b.saves * 3) + (b.tackles * 1.5) + b.interceptions;
-      return scoreB - scoreA;
-    })[0];
+    // Puanına göre en iyiyi seç
+    return pool.sort((a, b) => b.totalScore - a.totalScore)[0];
   };
 
   const totw = {

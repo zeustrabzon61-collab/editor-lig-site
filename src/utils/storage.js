@@ -270,7 +270,8 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
       assists: parseInt(ps.assists || 0),
       saves: parseInt(ps.gKSaves || ps.saves || 0),
       tackles: parseInt(ps.tackles || 0),
-      interceptions: parseInt(ps.interceptions || 0)
+      interceptions: parseInt(ps.interceptions || 0),
+      score: parseInt(ps.score || 0)
     }))
   });
 
