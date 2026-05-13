@@ -78,6 +78,7 @@ export const processMatchJSON = (jsonData) => {
     if (!player) {
       player = { 
         name: ps.playerName, 
+        psoId: ps.playerId || '', 
         team: ps.team, 
         goals: 0, 
         assists: 0, 
@@ -87,7 +88,10 @@ export const processMatchJSON = (jsonData) => {
         matches: 0 
       };
       players.push(player);
+    } else if (!player.psoId && ps.playerId) {
+      player.psoId = ps.playerId;
     }
+
     
     player.matches += 1;
     player.goals += ps.goals;
