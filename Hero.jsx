@@ -9,7 +9,7 @@ const Hero = () => {
         <div className="hero-badge animate-float">EDİTÖR LİG BAŞLIYOR</div>
         <h1 className="hero-title">REKABETİN <span className="gradient-text">YENİ DÜNYASI</span></h1>
         <p className="hero-subtitle">
-          PSO liglerinin en prestijlisi. 4 Dev takım, 16 haftalık amansız mücadele ve tek bir şampiyon. 
+          4 Dev takım, 16 haftalık amansız mücadele ve tek bir şampiyon. 
           Saha seni bekliyor.
         </p>
         
@@ -32,8 +32,8 @@ const Hero = () => {
             <p>Haftalık Lig</p>
           </div>
           <div className="h-stat-item">
-            <h3 className="neon-text">32</h3>
-            <p>Büyük Maç</p>
+            <h3 className="neon-text">16</h3>
+            <p>MAÇ</p>
           </div>
         </div>
       </div>
