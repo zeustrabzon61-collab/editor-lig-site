@@ -83,7 +83,7 @@ const Navbar = () => {
               <Settings size={18} />
             </button>
           )}
-          <Menu className="mobile-menu-icon" size={24} />
+          <Menu className="mobile-menu-icon" size={24} onClick={() => user ? navigate('/profile', { state: { tab: 'settings' } }) : navigate('/auth')} style={{ cursor: 'pointer' }} />
         </div>
       </div>
     </nav>

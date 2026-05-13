@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCurrentUser, updateUserProfile, logoutUser, getStorageData } from '../utils/storage';
+import { useLocation } from 'react-router-dom';
 import { User, Image as ImageIcon, Save, LogOut, Info, ShieldAlert, Target, Zap, Shield, Trophy } from 'lucide-react';
 
 const Profile = () => {
@@ -8,7 +9,8 @@ const Profile = () => {
   const [about, setAbout] = useState('');
   const [lookingForTeam, setLookingForTeam] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState('profile');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.tab || 'profile');
   const [playerStats, setPlayerStats] = useState(null);
 
   useEffect(() => {
