@@ -99,11 +99,14 @@ button {
   text-decoration: none;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 220px; /* Fixed width to prevent pushing */
+  height: 100%;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .logo-hover-effect:hover {
-  transform: translateY(-1px);
+  transform: scale(1.05); /* Very slight scale from center */
 }
 
 .logo-hover-effect:hover .logo-text {
@@ -111,7 +114,7 @@ button {
   text-shadow: 
     0 0 7px rgba(255, 255, 255, 0.3),
     0 0 15px var(--accent-primary);
-  letter-spacing: 3px;
+  letter-spacing: 2px;
 }
 
 .logo-hover-effect:hover .neon-text {
