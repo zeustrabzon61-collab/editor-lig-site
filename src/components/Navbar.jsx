@@ -32,8 +32,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container nav-content">
         <NavLink to="/" className="logo">
-          <span className="logo-text">EDİTÖR LİG</span>
-          <span className="logo-subtext">Community Portal</span>
+          <span className="logo-text">EDİTÖR <span className="neon-text">LİG</span></span>
         </NavLink>
         
         <ul className="nav-links">

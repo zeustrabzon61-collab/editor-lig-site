@@ -91,22 +91,19 @@ button {
 .logo {
   text-decoration: none;
   display: flex;
-  flex-direction: column;
+  align-items: center;
 }
 
 .logo-text {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: #fff;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  white-space: nowrap;
 }
 
 .logo-subtext {
-  font-size: 0.6rem;
-  color: var(--accent-primary);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  font-weight: 700;
+  display: none;
 }
 
 .nav-links {
