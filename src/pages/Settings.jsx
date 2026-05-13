@@ -7,6 +7,7 @@ const Settings = () => {
   const [avatar, setAvatar] = useState('');
   const [about, setAbout] = useState('');
   const [lookingForTeam, setLookingForTeam] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -22,11 +23,27 @@ const Settings = () => {
   }, []);
 
   const handleSave = () => {
-    const success = updateUserProfile(user.psoUsername, { avatar, about, lookingForTeam });
+    const updates = { avatar, about, lookingForTeam };
+    if (newPassword.trim()) {
+      updates.password = newPassword.trim();
+    }
+    const success = updateUserProfile(user.psoUsername, updates);
     if (success) {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-      setUser({ ...user, avatar, about, lookingForTeam });
+      setUser({ ...user, ...updates });
+      setNewPassword(''); // clear password field after save
+    }
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -53,14 +70,20 @@ const Settings = () => {
         </div>
 
         <div className="input-group-vertical">
-          <label><ImageIcon size={16} /> Profil Fotoğrafı Linki (Hızlıresim, Discord vb.)</label>
-          <input 
-            type="text" 
-            placeholder="https://site.com/resim.png" 
-            value={avatar} 
-            onChange={e => setAvatar(e.target.value)} 
-            style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
-          />
+          <label><ImageIcon size={16} /> Profil Fotoğrafı Linki veya Bilgisayardan Yükle</label>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <input 
+              type="text" 
+              placeholder="https://site.com/resim.png" 
+              value={avatar} 
+              onChange={e => setAvatar(e.target.value)} 
+              style={{ flex: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
+            />
+            <label className="btn-secondary" style={{ padding: '0.9rem', cursor: 'pointer', margin: 0 }}>
+              Yükle
+              <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+            </label>
+          </div>
         </div>
 
         <div className="input-group-vertical">
@@ -86,6 +109,17 @@ const Settings = () => {
             <input type="checkbox" checked={lookingForTeam} onChange={e => setLookingForTeam(e.target.checked)} />
             <span className="slider"></span>
           </label>
+        </div>
+
+        <div className="input-group-vertical" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)' }}>Şifre Değiştir</h4>
+          <input 
+            type="password" 
+            placeholder="Yeni Şifreniz (Değiştirmek istemiyorsanız boş bırakın)" 
+            value={newPassword} 
+            onChange={e => setNewPassword(e.target.value)} 
+            style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
+          />
         </div>
 
         <button className="btn-primary" style={{ justifyContent: 'center', padding: '1rem' }} onClick={handleSave}>
