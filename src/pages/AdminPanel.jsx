@@ -291,6 +291,13 @@ const AdminPanel = () => {
           )}
         </div>
         
+        <div className="glass-card">
+          <h3>Hızlı Eylemler</h3>
+          <div className="admin-actions">
+            <button className="btn-secondary" onClick={clearDatabase} style={{ color: '#ff4444', borderColor: 'rgba(255, 68, 68, 0.3)', width: '100%' }}>
+              <Trash2 size={18} /> Verileri Sıfırla
+            </button>
+          </div>
         </div>
       </div>
 
