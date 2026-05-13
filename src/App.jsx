@@ -10,6 +10,7 @@ import PlayersPage from './pages/PlayersPage';
 
 import Auth from './pages/Auth';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/takimlar" element={<div className="container page-container"><h2 className="section-title">Takımlar</h2><p>Pek yakında...</p></div>} />
           </Routes>
         </main>

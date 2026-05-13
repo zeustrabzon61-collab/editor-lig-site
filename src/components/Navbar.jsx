@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Trophy, Users, Calendar, BarChart3, Home, Menu, Settings, User, LayoutDashboard } from 'lucide-react';
+import { Trophy, Users, Calendar, BarChart3, Home, Menu, Settings, User, LayoutDashboard, LogOut } from 'lucide-react';
 
-import { getCurrentUser } from '../utils/storage';
+import { getCurrentUser, logoutUser } from '../utils/storage';
 
 const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   // Giriş durumunu kontrol et
@@ -83,7 +84,27 @@ const Navbar = () => {
               <Settings size={18} />
             </button>
           )}
-          <Menu className="mobile-menu-icon" size={24} onClick={() => user ? navigate('/profile', { state: { tab: 'settings' } }) : navigate('/auth')} style={{ cursor: 'pointer' }} />
+          <div style={{ position: 'relative' }}>
+            <Menu className="mobile-menu-icon" size={24} onClick={() => setMenuOpen(!menuOpen)} style={{ cursor: 'pointer', display: 'block' }} />
+            {menuOpen && (
+              <div className="glass-card animate-fade-in" style={{ position: 'absolute', top: '150%', right: '0', minWidth: '150px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', zIndex: 100 }}>
+                {user ? (
+                  <>
+                    <button className="btn-secondary" onClick={() => { setMenuOpen(false); navigate('/settings'); }} style={{ width: '100%', justifyContent: 'flex-start', padding: '0.75rem', fontSize: '0.9rem' }}>
+                      <Settings size={16} /> Ayarlar
+                    </button>
+                    <button className="btn-secondary" onClick={() => { setMenuOpen(false); logoutUser(); window.location.href='/'; }} style={{ width: '100%', justifyContent: 'flex-start', padding: '0.75rem', color: '#ff4444', borderColor: 'rgba(255,68,68,0.3)', fontSize: '0.9rem' }}>
+                      <LogOut size={16} /> Çıkış Yap
+                    </button>
+                  </>
+                ) : (
+                  <button className="btn-login" onClick={() => { setMenuOpen(false); navigate('/auth'); }} style={{ width: '100%', padding: '0.75rem' }}>
+                    Kayıt / Giriş
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </nav>
