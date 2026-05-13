@@ -9,7 +9,7 @@ const PlayerCard = ({ player, onClick }) => {
         <div className="fifa-card-inner">
           <div className="fifa-card-top">
             <div className="f-rating">{Math.min(99, 70 + (player.goals * 2) + (player.assists))}</div>
-            <div className="f-position">{player.position || 'ST'}</div>
+            <div className="f-position">{player.position || 'CM'}</div>
           </div>
           <div className="f-avatar-area">
             <User size={80} strokeWidth={1} />
