@@ -39,7 +39,7 @@ const PlayersPage = () => {
   const [selectedPosition, setSelectedPosition] = useState('All');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
-  const positions = ['GK', 'DEF', 'MID', 'ATT'];
+  const positions = ['GK', 'LB', 'RB', 'CM', 'LW', 'RW'];
 
   const filteredPlayers = players.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());

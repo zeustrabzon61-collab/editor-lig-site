@@ -19,7 +19,7 @@ const AdminPanel = () => {
     playerStats: []
   });
 
-  const [newStat, setNewStat] = useState({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
+  const [newStat, setNewStat] = useState({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'CM', goals: 0, assists: 0, saves: 0, tackles: 0 });
 
   const ADMIN_PASSWORD = 'Bulanahelalolsun611967';
 
@@ -78,7 +78,7 @@ const AdminPanel = () => {
       ...prev,
       playerStats: [...prev.playerStats, { ...newStat }]
     }));
-    setNewStat({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
+    setNewStat({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'CM', goals: 0, assists: 0, saves: 0, tackles: 0 });
   };
 
   const handleManualSave = () => {
@@ -222,9 +222,11 @@ const AdminPanel = () => {
                 </select>
                 <select value={newStat.position} onChange={e => setNewStat({...newStat, position: e.target.value})}>
                   <option value="GK">GK</option>
-                  <option value="DEF">DEF</option>
-                  <option value="MID">MID</option>
-                  <option value="ATT">ATT</option>
+                  <option value="LB">LB</option>
+                  <option value="RB">RB</option>
+                  <option value="CM">CM</option>
+                  <option value="LW">LW</option>
+                  <option value="RW">RW</option>
                 </select>
                 <input type="number" placeholder="Gol" value={newStat.goals} onChange={e => setNewStat({...newStat, goals: parseInt(e.target.value) || 0})} />
                 <input type="number" placeholder="Asist" value={newStat.assists} onChange={e => setNewStat({...newStat, assists: parseInt(e.target.value) || 0})} />
