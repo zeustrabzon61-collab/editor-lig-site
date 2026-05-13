@@ -91,21 +91,30 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   allPlayerStats.forEach(ps => {
     let player = players.find(p => p.name.toLowerCase() === ps.playerName.toLowerCase());
     
-    // PSO'dan gelen veriyi temizle (postion hatasını ve farklı isimleri düzelt)
-    const rawPos = (ps.position || ps.postion || '').toUpperCase();
-    let finalPos = 'CM'; // Varsayılan
+    // Bütün olası PSO hatalarını ve büyük/küçük harf durumlarını kapsayalım
+    const extractField = (fieldNames) => {
+      const key = Object.keys(ps).find(k => fieldNames.includes(k.toLowerCase()));
+      return key ? ps[key] : '';
+    };
+
+    const rawPos = String(extractField(['position', 'postion', 'pos'])).toUpperCase();
+    const rawId = String(extractField(['playerid', 'steamid', 'psoid', 'id']));
     
+    let finalPos = 'CM'; // Varsayılan
     if (rawPos.includes('GK')) finalPos = 'GK';
     else if (rawPos.includes('LB')) finalPos = 'LB';
     else if (rawPos.includes('RB')) finalPos = 'RB';
     else if (rawPos.includes('LW')) finalPos = 'LW';
     else if (rawPos.includes('RW')) finalPos = 'RW';
     else if (rawPos.includes('CM') || rawPos.includes('MID')) finalPos = 'CM';
+    else if (rawPos.includes('ATT') || rawPos.includes('ST')) finalPos = 'ATT';
+    else if (rawPos !== '') finalPos = rawPos; // Eğer hiçbiri değilse oyunun verdiğini kullan
+
 
     if (!player) {
       player = { 
         name: ps.playerName, 
-        psoId: ps.playerId || '', 
+        psoId: rawId, 
         team: ps.team, 
         position: finalPos,
         goals: 0, 
@@ -118,10 +127,11 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
       players.push(player);
     } else {
       // Mevcut oyuncuyu güncelle
-      if (ps.playerId) player.psoId = ps.playerId;
+      if (rawId) player.psoId = rawId;
       player.position = finalPos;
       player.team = ps.team;
     }
+
 
     
     player.matches += 1;
