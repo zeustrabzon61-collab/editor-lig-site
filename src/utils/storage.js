@@ -8,8 +8,9 @@ const INITIAL_TEAMS = [
 const INITIAL_PLAYERS = [];
 const INITIAL_MATCHES = [];
 
-// HERKES İÇİN ORTAK BULUT KANALI (Üyelik Gerektirmez)
-const CLOUD_STORAGE_URL = "https://kvdb.io/Tz9Kj8y1Z5m2p1X5m2p1/pso_league_v1";
+// HERKES İÇİN ORTAK BULUT KANALI
+// Bu bucket ID sitemizin ana veritabanı görevi görür.
+const CLOUD_STORAGE_URL = "https://kvdb.io/Tz9Kj8y1Z5m2p1X5m2p1/pso_league_v2";
 
 export const getStorageData = () => {
   const teamsStr = localStorage.getItem('pso_teams_v2');
@@ -20,14 +21,6 @@ export const getStorageData = () => {
   let teams = teamsStr ? JSON.parse(teamsStr) : INITIAL_TEAMS;
   let players = playersStr ? JSON.parse(playersStr) : INITIAL_PLAYERS;
   let matches = matchesStr ? JSON.parse(matchesStr) : INITIAL_MATCHES;
-
-  teams = teams.map(t => {
-    const initial = INITIAL_TEAMS.find(it => it.name.toUpperCase() === t.name.toUpperCase());
-    if (initial && !t.logo) {
-      return { ...t, logo: initial.logo };
-    }
-    return t;
-  });
 
   return {
     teams,
@@ -43,7 +36,7 @@ export const saveStorageData = (data) => {
   if (data.matches) localStorage.setItem('pso_matches_v2', JSON.stringify(data.matches));
   if (data.users) localStorage.setItem('pso_users_v3', JSON.stringify(data.users));
   
-  // BULUTA KAYDET (Otomatik Arka Planda)
+  // Buluta Push et
   syncToCloud(data);
 };
 
@@ -52,6 +45,7 @@ const syncToCloud = async (data) => {
         const current = getStorageData();
         const comments = localStorage.getItem('pso_comments');
         const chat = localStorage.getItem('pso_global_chat');
+        const totw = localStorage.getItem('pso_totw_v1');
 
         const allData = {
             teams: data.teams || current.teams,
@@ -60,15 +54,16 @@ const syncToCloud = async (data) => {
             users: data.users || current.users,
             comments: data.comments || (comments ? JSON.parse(comments) : {}),
             chat: data.chat || (chat ? JSON.parse(chat) : []),
-            totw: data.totw || (localStorage.getItem('pso_totw_v1') ? JSON.parse(localStorage.getItem('pso_totw_v1')) : {})
+            totw: data.totw || (totw ? JSON.parse(totw) : {})
         };
 
         await fetch(CLOUD_STORAGE_URL, {
             method: 'POST',
             body: JSON.stringify(allData)
         });
+        console.log("Cloud sync successful");
     } catch (err) {
-        console.error("Bulut kaydı başarısız:", err);
+        console.error("Cloud sync failed:", err);
     }
 };
 
@@ -85,15 +80,19 @@ export const initCloudSync = async () => {
                 if (cloudData.comments) localStorage.setItem('pso_comments', JSON.stringify(cloudData.comments));
                 if (cloudData.chat) localStorage.setItem('pso_global_chat', JSON.stringify(cloudData.chat));
                 if (cloudData.totw) localStorage.setItem('pso_totw_v1', JSON.stringify(cloudData.totw));
+                
+                // Bileşenlere haber ver
                 window.dispatchEvent(new Event('storage'));
                 return true;
             }
         }
     } catch (err) {
-        console.warn("Bulut verisi çekilemedi.");
+        console.warn("Cloud data fetch failed.");
     }
     return false;
 };
+
+// ... Geri kalan fonksiyonlar (processMatchJSON, login, vb.) değişmeden devam ediyor ...
 
 export const getCurrentUser = () => {
   const user = localStorage.getItem('pso_current_user_v3');
@@ -262,17 +261,23 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
     score2: t2.goals,
     scorers: matchScorers,
     assists: matchAssists,
-    playerStats: allPlayerStats.map(ps => ({
-      name: ps.playerName,
-      team: ps.team,
-      position: ps.position || ps.postion || 'CM',
-      goals: parseInt(ps.goals || 0),
-      assists: parseInt(ps.assists || 0),
-      saves: parseInt(ps.gKSaves || ps.saves || 0),
-      tackles: parseInt(ps.tackles || 0),
-      interceptions: parseInt(ps.interceptions || 0),
-      score: parseInt(ps.score || 0)
-    }))
+    playerStats: allPlayerStats.map(ps => {
+      const extractField = (fieldNames) => {
+        const key = Object.keys(ps).find(k => fieldNames.includes(k.toLowerCase()));
+        return key ? ps[key] : '';
+      };
+      return {
+        name: ps.playerName,
+        team: ps.team,
+        position: ps.position || ps.postion || 'CM',
+        goals: parseInt(extractField(['goals', 'goal', 'g']) || 0),
+        assists: parseInt(extractField(['assists', 'assist', 'a']) || 0),
+        saves: parseInt(extractField(['gksaves', 'saves', 's']) || 0),
+        tackles: parseInt(extractField(['tackles', 'tackle', 't']) || 0),
+        interceptions: parseInt(extractField(['interceptions', 'interception', 'i']) || 0),
+        score: parseInt(extractField(['score', 'puan']) || 0)
+      };
+    })
   });
 
   saveStorageData({ teams, players, matches });
@@ -378,7 +383,8 @@ export const resetAllData = async () => {
     matches: [],
     users: resetUsers,
     comments: {},
-    chat: []
+    chat: [],
+    totw: {}
   };
 
   localStorage.setItem('pso_teams_v2', JSON.stringify(resetTeams));
@@ -387,6 +393,7 @@ export const resetAllData = async () => {
   localStorage.setItem('pso_users_v3', JSON.stringify(resetUsers));
   localStorage.removeItem('pso_comments');
   localStorage.removeItem('pso_global_chat');
+  localStorage.removeItem('pso_totw_v1');
 
   await fetch(CLOUD_STORAGE_URL, {
       method: 'POST',

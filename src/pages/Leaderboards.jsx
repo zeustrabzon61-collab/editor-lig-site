@@ -3,7 +3,15 @@ import { getStorageData } from '../utils/storage';
 import { Trophy, Star, Shield, Crosshair } from 'lucide-react';
 
 const Leaderboards = () => {
-  const { players } = getStorageData();
+  const [data, setData] = React.useState(getStorageData());
+
+  React.useEffect(() => {
+    const handleSync = () => setData(getStorageData());
+    window.addEventListener('storage', handleSync);
+    return () => window.removeEventListener('storage', handleSync);
+  }, []);
+
+  const { players } = data;
 
   const getTop = (key, limit = 10) => {
     return [...players].sort((a, b) => b[key] - a[key]).slice(0, limit);

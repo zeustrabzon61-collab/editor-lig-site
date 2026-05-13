@@ -18,7 +18,15 @@ import { initCloudSync } from './utils/storage';
 
 function App() {
   React.useEffect(() => {
+    // İlk açılışta verileri çek
     initCloudSync();
+
+    // Her 30 saniyede bir bulutu kontrol et (Real-time sync)
+    const interval = setInterval(() => {
+      initCloudSync();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (

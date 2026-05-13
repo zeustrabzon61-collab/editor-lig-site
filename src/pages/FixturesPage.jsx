@@ -3,7 +3,15 @@ import { getStorageData, cleanTeamName, getComments, addComment, getCurrentUser,
 import { MessageSquare, Send, X, User } from 'lucide-react';
 
 const FixturesPage = () => {
-  const { teams: storedTeams, matches: storedMatches } = getStorageData();
+  const [data, setData] = React.useState(getStorageData());
+
+  React.useEffect(() => {
+    const handleSync = () => setData(getStorageData());
+    window.addEventListener('storage', handleSync);
+    return () => window.removeEventListener('storage', handleSync);
+  }, []);
+
+  const { teams: storedTeams, matches: storedMatches } = data;
   const [selectedMatch, setSelectedMatch] = React.useState(null);
   const [commentText, setCommentText] = React.useState('');
   const [matchComments, setMatchComments] = React.useState([]);

@@ -1,8 +1,17 @@
-import React from 'react';
 import { getStorageData } from '../utils/storage';
 
 const Standings = () => {
-  const { teams } = getStorageData();
+  const [data, setData] = React.useState(getStorageData());
+
+  React.useEffect(() => {
+    const handleSync = () => {
+      setData(getStorageData());
+    };
+    window.addEventListener('storage', handleSync);
+    return () => window.removeEventListener('storage', handleSync);
+  }, []);
+
+  const { teams } = data;
 
   // Sıralama algoritması: Puan > Averaj > Atılan Gol
   const sortedTeams = [...teams].sort((a, b) => {
