@@ -3,7 +3,10 @@ import { getStorageData } from '../utils/storage';
 
 const TeamOfTheWeek = () => {
   const [selectedWeek, setSelectedWeek] = useState(1);
-  const { players } = getStorageData();
+  const { players, matches: storedMatches } = getStorageData();
+  
+  // Haftada 2 maç olduğu varsayımıyla (4 takım)
+  const isPlayed = storedMatches.length >= selectedWeek * 2;
 
   // Demo amaçlı, genel istatistiklere göre mevkideki en iyi oyuncuyu seçiyoruz
   // Gerçek uygulamada bu haftalık maç verilerinden filtrelenmelidir.
@@ -54,20 +57,30 @@ const TeamOfTheWeek = () => {
       }}>
         {player.position}
       </div>
-      <div style={{
-        background: 'rgba(0,0,0,0.7)',
-        padding: '0.2rem 0.5rem',
-        borderRadius: '4px',
-        textAlign: 'center',
-        border: '1px solid rgba(255,255,255,0.2)'
-      }}>
-        <div style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '90px' }}>
-          {player.name}
+      {isPlayed ? (
+        <div style={{
+          background: 'rgba(0,0,0,0.7)',
+          padding: '0.2rem 0.5rem',
+          borderRadius: '4px',
+          textAlign: 'center',
+          border: '1px solid rgba(255,255,255,0.2)'
+        }}>
+          <div style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '90px' }}>
+            {player.name}
+          </div>
+          <div style={{ color: '#00ffcc', fontSize: '0.65rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '90px' }}>
+            {player.team}
+          </div>
         </div>
-        <div style={{ color: '#00ffcc', fontSize: '0.65rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '90px' }}>
-          {player.team}
-        </div>
-      </div>
+      ) : (
+        <div style={{
+          background: 'rgba(255,255,255,0.05)',
+          height: '24px',
+          width: '80px',
+          borderRadius: '4px',
+          border: '1px dashed rgba(255,255,255,0.2)'
+        }}></div>
+      )}
     </div>
   );
 
