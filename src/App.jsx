@@ -14,8 +14,13 @@ import Squads from './pages/Squads';
 import TeamOfTheWeek from './pages/TeamOfTheWeek';
 import Awards from './pages/Awards';
 import GlobalChat from './components/GlobalChat';
+import { initCloudSync } from './utils/storage';
 
 function App() {
+  React.useEffect(() => {
+    initCloudSync();
+  }, []);
+
   return (
     <Router>
       <div className="app">

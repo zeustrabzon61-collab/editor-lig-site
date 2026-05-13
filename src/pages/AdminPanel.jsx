@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName, resetAllData } from '../utils/storage';
-import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList, Info } from 'lucide-react';
+import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName, resetAllData, initCloudSync } from '../utils/storage';
+import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList, Info, RefreshCw } from 'lucide-react';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('json');
@@ -190,6 +190,19 @@ const AdminPanel = () => {
     }
   };
 
+  const handleCloudSync = async () => {
+    setStatus({ type: 'info', message: 'Bulut verileri çekiliyor...' });
+    const success = await initCloudSync();
+    if (success) {
+      const data = getStorageData();
+      setTeams(data.teams || []);
+      setStatus({ type: 'success', message: 'Bulut verileri başarıyla güncellendi!' });
+    } else {
+      setStatus({ type: 'error', message: 'Bulut verileri çekilemedi.' });
+    }
+    setTimeout(() => setStatus({ type: '', message: '' }), 3000);
+  };
+
   const clearDatabase = () => {
     if (window.confirm('Verileri sıfırlamak istediğinize emin misiniz? Puan durumu ve tüm istatistikler silinecektir.')) {
       resetAllData();
@@ -308,7 +321,10 @@ const AdminPanel = () => {
         
         <div className="glass-card">
           <h3>Hızlı Eylemler</h3>
-          <div className="admin-actions">
+          <div className="admin-actions" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <button className="btn-primary" onClick={handleCloudSync} style={{ width: '100%', background: 'var(--accent-secondary)' }}>
+              <RefreshCw size={18} /> Bulut ile Eşitle
+            </button>
             <button className="btn-secondary" onClick={clearDatabase} style={{ color: '#ff4444', borderColor: 'rgba(255, 68, 68, 0.3)', width: '100%' }}>
               <Trash2 size={18} /> Verileri Sıfırla
             </button>

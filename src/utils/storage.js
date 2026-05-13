@@ -6,8 +6,10 @@ const INITIAL_TEAMS = [
 ];
 
 const INITIAL_PLAYERS = [];
-
 const INITIAL_MATCHES = [];
+
+// HERKES İÇİN ORTAK BULUT KANALI (Üyelik Gerektirmez)
+const CLOUD_STORAGE_URL = "https://kvdb.io/Tz9Kj8y1Z5m2p1X5m2p1/pso_league_v1";
 
 export const getStorageData = () => {
   const teamsStr = localStorage.getItem('pso_teams_v2');
@@ -19,7 +21,6 @@ export const getStorageData = () => {
   let players = playersStr ? JSON.parse(playersStr) : INITIAL_PLAYERS;
   let matches = matchesStr ? JSON.parse(matchesStr) : INITIAL_MATCHES;
 
-  // Mevcut verilere logo bilgisini enjekte et (eğer yoksa)
   teams = teams.map(t => {
     const initial = INITIAL_TEAMS.find(it => it.name.toUpperCase() === t.name.toUpperCase());
     if (initial && !t.logo) {
@@ -41,6 +42,55 @@ export const saveStorageData = (data) => {
   if (data.players) localStorage.setItem('pso_players_v2', JSON.stringify(data.players));
   if (data.matches) localStorage.setItem('pso_matches_v2', JSON.stringify(data.matches));
   if (data.users) localStorage.setItem('pso_users_v3', JSON.stringify(data.users));
+  
+  // BULUTA KAYDET (Otomatik Arka Planda)
+  syncToCloud(data);
+};
+
+const syncToCloud = async (data) => {
+    try {
+        const current = getStorageData();
+        const comments = localStorage.getItem('pso_comments');
+        const chat = localStorage.getItem('pso_global_chat');
+
+        const allData = {
+            teams: data.teams || current.teams,
+            players: data.players || current.players,
+            matches: data.matches || current.matches,
+            users: data.users || current.users,
+            comments: data.comments || (comments ? JSON.parse(comments) : {}),
+            chat: data.chat || (chat ? JSON.parse(chat) : [])
+        };
+
+        await fetch(CLOUD_STORAGE_URL, {
+            method: 'POST',
+            body: JSON.stringify(allData)
+        });
+    } catch (err) {
+        console.error("Bulut kaydı başarısız:", err);
+    }
+};
+
+export const initCloudSync = async () => {
+    try {
+        const response = await fetch(CLOUD_STORAGE_URL);
+        if (response.ok) {
+            const cloudData = await response.json();
+            if (cloudData && cloudData.teams) {
+                localStorage.setItem('pso_teams_v2', JSON.stringify(cloudData.teams));
+                localStorage.setItem('pso_players_v2', JSON.stringify(cloudData.players || []));
+                localStorage.setItem('pso_matches_v2', JSON.stringify(cloudData.matches || []));
+                localStorage.setItem('pso_users_v3', JSON.stringify(cloudData.users || []));
+                if (cloudData.comments) localStorage.setItem('pso_comments', JSON.stringify(cloudData.comments));
+                if (cloudData.chat) localStorage.setItem('pso_global_chat', JSON.stringify(cloudData.chat));
+                window.dispatchEvent(new Event('storage'));
+                return true;
+            }
+        }
+    } catch (err) {
+        console.warn("Bulut verisi çekilemedi.");
+    }
+    return false;
 };
 
 export const getCurrentUser = () => {
@@ -68,7 +118,6 @@ export const registerUser = (psoId, password) => {
     return { success: false, message: 'Bu PSO ID zaten kayıtlı.' };
   }
 
-  // Önce kaydedilmiş oyuncular (maç verilerinden gelen) arasında ara, yoksa INITIAL_PLAYERS'da ara
   const existingPlayer = players.find(p => p.psoId === psoId) || INITIAL_PLAYERS.find(p => p.psoId === psoId);
   const psoUsername = existingPlayer ? existingPlayer.name : `Oyuncu_${psoId}`;
 
@@ -81,7 +130,7 @@ export const registerUser = (psoId, password) => {
   };
 
   const updatedUsers = [...users, newUser];
-  localStorage.setItem('pso_users_v3', JSON.stringify(updatedUsers));
+  saveStorageData({ users: updatedUsers });
   localStorage.setItem('pso_current_user_v3', JSON.stringify(newUser));
   return { success: true, user: newUser };
 };
@@ -91,11 +140,7 @@ export const updateUserProfile = (psoId, updates) => {
   const userIndex = data.users.findIndex(u => u.psoId === psoId);
   if (userIndex !== -1) {
     data.users[userIndex] = { ...data.users[userIndex], ...updates };
-    
-    // Global user listesini de güncelle (v3 anahtarı ile)
-    localStorage.setItem('pso_users_v3', JSON.stringify(data.users));
-    
-    // Oturumdaki kullanıcıyı güncelle
+    saveStorageData({ users: data.users });
     localStorage.setItem('pso_current_user_v3', JSON.stringify(data.users[userIndex]));
     return true;
   }
@@ -108,18 +153,15 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   const { teams, players, matches } = getStorageData();
   const match = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
 
-  // Eşleştirmeleri Uygula
   if (teamMappings.team1) match.team1Stats.teamName = teamMappings.team1;
   if (teamMappings.team2) match.team2Stats.teamName = teamMappings.team2;
   
-  // Oyuncu takımlarını da eşleştirmeye göre güncelle
   match.team1PlayerStats.forEach(p => p.team = match.team1Stats.teamName);
   match.team2PlayerStats.forEach(p => p.team = match.team2Stats.teamName);
 
   const t1 = match.team1Stats;
   const t2 = match.team2Stats;
 
-  // Takımları Güncelle
   const updateTeam = (name, goalsFor, goalsAgainst) => {
     const searchName = cleanTeamName(name);
 
@@ -132,7 +174,6 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
       team = { name, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0, logo: '/logos/default.png' };
       teams.push(team);
     }
-
 
     team.played += 1;
     team.gf += goalsFor;
@@ -152,14 +193,11 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   updateTeam(t1.teamName, t1.goals, t2.goals);
   updateTeam(t2.teamName, t2.goals, t1.goals);
 
-  // Oyuncu İstatistiklerini Güncelle
   const allPlayerStats = [...match.team1PlayerStats, ...match.team2PlayerStats];
-  
   const matchScorers = [];
   const matchAssists = [];
 
   allPlayerStats.forEach(ps => {
-    // Bütün olası PSO hatalarını ve büyük/küçük harf durumlarını kapsayalım
     const extractField = (fieldNames) => {
       const key = Object.keys(ps).find(k => fieldNames.includes(k.toLowerCase()));
       return key ? ps[key] : '';
@@ -172,12 +210,10 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
     if (assists > 0) matchAssists.push({ playerName: ps.playerName, assists: assists, team: ps.team });
 
     let player = players.find(p => p.name.toLowerCase() === ps.playerName.toLowerCase());
-    
-
     const rawPos = String(extractField(['position', 'postion', 'pos'])).toUpperCase();
     const rawId = String(extractField(['playerid', 'steamid', 'psoid', 'id']));
     
-    let finalPos = 'CM'; // Varsayılan
+    let finalPos = 'CM';
     if (rawPos.includes('GK')) finalPos = 'GK';
     else if (rawPos.includes('LB')) finalPos = 'LB';
     else if (rawPos.includes('RB')) finalPos = 'RB';
@@ -185,8 +221,7 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
     else if (rawPos.includes('RW')) finalPos = 'RW';
     else if (rawPos.includes('CM') || rawPos.includes('MID')) finalPos = 'CM';
     else if (rawPos.includes('ATT') || rawPos.includes('ST')) finalPos = 'ATT';
-    else if (rawPos !== '') finalPos = rawPos; // Eğer hiçbiri değilse oyunun verdiğini kullan
-
+    else if (rawPos !== '') finalPos = rawPos;
 
     if (!player) {
       player = { 
@@ -203,14 +238,11 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
       };
       players.push(player);
     } else {
-      // Mevcut oyuncuyu güncelle
       if (rawId) player.psoId = rawId;
       player.position = finalPos;
       player.team = ps.team;
     }
 
-
-    
     player.matches += 1;
     player.goals += goals;
     player.assists += assists;
@@ -219,7 +251,6 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
     player.interceptions += (parseInt(extractField(['interceptions', 'interception', 'i']) || 0));
   });
 
-  // Maç Geçmişine Ekle
   matches.push({
     id: `match-${Date.now()}`,
     date: new Date().toISOString(),
@@ -244,8 +275,8 @@ export const getComments = (matchId) => {
 
 export const addComment = (matchId, user, text) => {
   if (!user || !text) return;
-  const comments = localStorage.getItem('pso_comments');
-  const allComments = comments ? JSON.parse(comments) : {};
+  const commentsStr = localStorage.getItem('pso_comments');
+  const allComments = commentsStr ? JSON.parse(commentsStr) : {};
   if (!allComments[matchId]) allComments[matchId] = [];
   
   allComments[matchId].push({
@@ -257,29 +288,32 @@ export const addComment = (matchId, user, text) => {
   });
   
   localStorage.setItem('pso_comments', JSON.stringify(allComments));
+  syncToCloud({ comments: allComments });
 };
 
 export const deleteComment = (matchId, commentId) => {
-  const comments = localStorage.getItem('pso_comments');
-  if (!comments) return;
-  const allComments = JSON.parse(comments);
+  const commentsStr = localStorage.getItem('pso_comments');
+  if (!commentsStr) return;
+  const allComments = JSON.parse(commentsStr);
   if (!allComments[matchId]) return;
   
   allComments[matchId] = allComments[matchId].filter(c => c.id !== commentId);
   localStorage.setItem('pso_comments', JSON.stringify(allComments));
+  syncToCloud({ comments: allComments });
 };
 
 export const updateComment = (matchId, commentId, newText) => {
-  const comments = localStorage.getItem('pso_comments');
-  if (!comments) return;
-  const allComments = JSON.parse(comments);
+  const commentsStr = localStorage.getItem('pso_comments');
+  if (!commentsStr) return;
+  const allComments = JSON.parse(commentsStr);
   if (!allComments[matchId]) return;
   
   const comment = allComments[matchId].find(c => c.id === commentId);
   if (comment) {
     comment.text = newText;
-    comment.date = new Date().toISOString(); // Opsiyonel: Güncelleme tarihini de set edebiliriz
+    comment.date = new Date().toISOString();
     localStorage.setItem('pso_comments', JSON.stringify(allComments));
+    syncToCloud({ comments: allComments });
   }
 };
 
@@ -300,31 +334,39 @@ export const addGlobalChatMessage = (user, text) => {
     date: new Date().toISOString()
   });
   
-  // Son 100 mesajı tutalım (limit)
   const limitedChat = chat.slice(-100);
   localStorage.setItem('pso_global_chat', JSON.stringify(limitedChat));
+  syncToCloud({ chat: limitedChat });
 };
 
 export const deleteGlobalChatMessage = (messageId) => {
   const chat = getGlobalChat();
   const updatedChat = chat.filter(m => m.id !== messageId);
   localStorage.setItem('pso_global_chat', JSON.stringify(updatedChat));
+  syncToCloud({ chat: updatedChat });
 };
 
-export const resetAllData = () => {
+export const resetAllData = async () => {
   const { teams, users } = getStorageData();
   
-  // Reset team stats but keep logos and names
   const resetTeams = teams.map(t => ({
     ...t,
     played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0
   }));
 
-  // Reset user stats
   const resetUsers = users.map(u => ({
     ...u,
     stats: { played: 0, goals: 0, assists: 0 }
   }));
+
+  const emptyData = {
+    teams: resetTeams,
+    players: [],
+    matches: [],
+    users: resetUsers,
+    comments: {},
+    chat: []
+  };
 
   localStorage.setItem('pso_teams_v2', JSON.stringify(resetTeams));
   localStorage.setItem('pso_players_v2', JSON.stringify([]));
@@ -332,4 +374,9 @@ export const resetAllData = () => {
   localStorage.setItem('pso_users_v3', JSON.stringify(resetUsers));
   localStorage.removeItem('pso_comments');
   localStorage.removeItem('pso_global_chat');
+
+  await fetch(CLOUD_STORAGE_URL, {
+      method: 'POST',
+      body: JSON.stringify(emptyData)
+  });
 };
