@@ -17,11 +17,15 @@ import GlobalChat from './components/GlobalChat';
 import { initCloudSync } from './utils/storage';
 
 function App() {
-  React.useEffect(() => {
-    // İlk açılışta verileri çek
-    initCloudSync();
+  const [isSyncing, setIsSyncing] = React.useState(true);
 
-    // Her 30 saniyede bir bulutu kontrol et (Real-time sync)
+  React.useEffect(() => {
+    const sync = async () => {
+      await initCloudSync();
+      setIsSyncing(false);
+    };
+    sync();
+
     const interval = setInterval(() => {
       initCloudSync();
     }, 30000);
@@ -32,6 +36,17 @@ function App() {
   return (
     <Router>
       <div className="app">
+        {isSyncing && (
+          <div style={{
+            position: 'fixed', bottom: '20px', right: '20px', 
+            background: 'rgba(0,0,0,0.8)', padding: '10px 20px', 
+            borderRadius: '20px', border: '1px solid var(--primary-color)',
+            zIndex: 9999, color: 'white', fontSize: '0.8rem',
+            display: 'flex', alignItems: 'center', gap: '10px'
+          }}>
+            <div className="sync-spinner"></div> Bulut Senkronize Ediliyor...
+          </div>
+        )}
         <Navbar />
         <main>
           <Routes>

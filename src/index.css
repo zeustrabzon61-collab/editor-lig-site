@@ -12,6 +12,19 @@
   --blue-glow: 0 0 20px rgba(37, 99, 235, 0.4);
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sync-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
 * {
   margin: 0;
   padding: 0;

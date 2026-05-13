@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName, resetAllData, initCloudSync, saveTOTW, getTOTW } from '../utils/storage';
-import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList, Info, RefreshCw } from 'lucide-react';
+import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList, Info, RefreshCw, Wrench } from 'lucide-react';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('json');
@@ -336,6 +336,16 @@ const AdminPanel = () => {
                 alert('Tüm veriler başarıyla buluta gönderildi! Artık herkes güncel veriyi görecek.');
               }}>
                 <Upload size={20} /> Verileri Buluta Gönder
+              </button>
+
+              <button className="btn-secondary" style={{ width: '100%', marginTop: '1.5rem', padding: '1rem', borderStyle: 'dashed' }} onClick={async () => {
+                if(window.confirm('Eski 4 maçı otomatik olarak sisteme yüklemek istiyor musunuz?')) {
+                  const { restorePastMatches } = await import('../utils/storage');
+                  await restorePastMatches();
+                  alert('Eski maçlar başarıyla yüklendi ve puan durumu güncellendi!');
+                }
+              }}>
+                <Wrench size={18} /> Eski Maçları Otomatik Onar
               </button>
             </div>
           ) : (
