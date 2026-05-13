@@ -68,11 +68,20 @@ const FixturesPage = () => {
           const scorers = playedMatch.scorers || [];
           const assists = playedMatch.assists || [];
 
+          // Daha esnek eşleştirme için cleanTeamName kullanıyoruz
           t1Scorers = scorers.filter(s => cleanTeamName(s.team) === cleanTeamName(teamA));
           t2Scorers = scorers.filter(s => cleanTeamName(s.team) === cleanTeamName(teamB));
           
           t1Assists = assists.filter(a => cleanTeamName(a.team) === cleanTeamName(teamA));
           t2Assists = assists.filter(a => cleanTeamName(a.team) === cleanTeamName(teamB));
+
+          // Eğer hala boşsa (isim farkından dolayı), tüm golleri/asistleri dağıtmayı dene (yedek plan)
+          if (t1Scorers.length === 0 && t2Scorers.length === 0 && scorers.length > 0) {
+             // Bu durum genellikle team mapping hatalarında olur
+             // Şimdilik veriyi olduğu gibi alalım
+             t1Scorers = isTeamAFirst ? scorers.filter(s => cleanTeamName(s.team) === cleanTeamName(playedMatch.team1)) : scorers.filter(s => cleanTeamName(s.team) === cleanTeamName(playedMatch.team2));
+             t2Scorers = isTeamAFirst ? scorers.filter(s => cleanTeamName(s.team) === cleanTeamName(playedMatch.team2)) : scorers.filter(s => cleanTeamName(s.team) === cleanTeamName(playedMatch.team1));
+          }
         }
 
         return {

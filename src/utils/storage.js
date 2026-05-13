@@ -145,8 +145,11 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   const matchAssists = [];
 
   allPlayerStats.forEach(ps => {
-    if (ps.goals > 0) matchScorers.push({ playerName: ps.playerName, goals: ps.goals, team: ps.team });
-    if (ps.assists > 0) matchAssists.push({ playerName: ps.playerName, assists: ps.assists, team: ps.team });
+    const goals = parseInt(extractField(['goals', 'goal', 'g']) || 0);
+    const assists = parseInt(extractField(['assists', 'assist', 'a']) || 0);
+
+    if (goals > 0) matchScorers.push({ playerName: ps.playerName, goals: goals, team: ps.team });
+    if (assists > 0) matchAssists.push({ playerName: ps.playerName, assists: assists, team: ps.team });
 
     let player = players.find(p => p.name.toLowerCase() === ps.playerName.toLowerCase());
     
@@ -194,11 +197,11 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
 
     
     player.matches += 1;
-    player.goals += ps.goals;
-    player.assists += ps.assists;
-    player.saves += (ps.gKSaves || 0);
-    player.tackles += ps.tackles;
-    player.interceptions += ps.interceptions;
+    player.goals += goals;
+    player.assists += assists;
+    player.saves += (parseInt(extractField(['gksaves', 'saves', 's']) || 0));
+    player.tackles += (parseInt(extractField(['tackles', 'tackle', 't']) || 0));
+    player.interceptions += (parseInt(extractField(['interceptions', 'interception', 'i']) || 0));
   });
 
   // Maç Geçmişine Ekle
