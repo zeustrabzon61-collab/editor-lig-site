@@ -212,9 +212,15 @@ const FixturesPage = () => {
             <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '800', marginBottom: '1.5rem', letterSpacing: '2px' }}>MAÇ SONUCU</div>
               
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                {/* Team 1 */}
-                <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 140px 1fr', 
+                alignItems: 'center',
+                width: '100%',
+                position: 'relative'
+              }}>
+                {/* Team 1 (Left) */}
+                <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', overflow: 'hidden' }}>
                   <div style={{ 
                     width: '90px', height: '90px', 
                     background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)', 
@@ -224,22 +230,27 @@ const FixturesPage = () => {
                   }}>
                     <img src={getLogo(selectedMatch.team1)} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
                   </div>
-                  <div style={{ fontWeight: '900', fontSize: '0.9rem', color: '#fff', maxWidth: '140px' }}>{selectedMatch.team1}</div>
-                </div>
-
-                {/* Score */}
-                <div style={{ flex: '0 0 140px', textAlign: 'center' }}>
-                  <div style={{ 
-                    fontSize: '4.5rem', fontWeight: '900', color: '#fff', 
-                    textShadow: '0 0 30px rgba(0, 242, 255, 0.5)', 
-                    lineHeight: 1, fontStyle: 'italic'
-                  }}>
-                    {selectedMatch.score1}<span style={{ color: 'var(--accent-primary)', fontSize: '2rem', margin: '0 10px', verticalAlign: 'middle', fontStyle: 'normal' }}>-</span>{selectedMatch.score2}
+                  <div style={{ fontWeight: '900', fontSize: '0.9rem', color: '#fff', width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 10px' }}>
+                    {selectedMatch.team1}
                   </div>
                 </div>
 
-                {/* Team 2 */}
-                <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {/* Score (Center) */}
+                <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ 
+                    fontSize: '4.5rem', fontWeight: '900', color: '#fff', 
+                    textShadow: '0 0 30px rgba(0, 242, 255, 0.5)', 
+                    lineHeight: 1, fontStyle: 'italic',
+                    display: 'flex', alignItems: 'center', gap: '8px'
+                  }}>
+                    <span>{selectedMatch.score1}</span>
+                    <span style={{ color: 'var(--accent-primary)', fontSize: '2rem', fontStyle: 'normal' }}>-</span>
+                    <span>{selectedMatch.score2}</span>
+                  </div>
+                </div>
+
+                {/* Team 2 (Right) */}
+                <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', overflow: 'hidden' }}>
                   <div style={{ 
                     width: '90px', height: '90px', 
                     background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)', 
@@ -249,7 +260,9 @@ const FixturesPage = () => {
                   }}>
                     <img src={getLogo(selectedMatch.team2)} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
                   </div>
-                  <div style={{ fontWeight: '900', fontSize: '0.9rem', color: '#fff', maxWidth: '140px' }}>{selectedMatch.team2}</div>
+                  <div style={{ fontWeight: '900', fontSize: '0.9rem', color: '#fff', width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 10px' }}>
+                    {selectedMatch.team2}
+                  </div>
                 </div>
               </div>
             </div>
