@@ -218,6 +218,80 @@ export const resetAllData = async () => {
   });
 };
 
+export const getComments = (matchId) => {
+  const comments = localStorage.getItem('pso_comments');
+  if (!comments) return [];
+  const allComments = JSON.parse(comments);
+  return allComments[matchId] || [];
+};
+
+export const addComment = (matchId, user, text) => {
+  if (!user || !text) return;
+  const commentsStr = localStorage.getItem('pso_comments');
+  const allComments = commentsStr ? JSON.parse(commentsStr) : {};
+  if (!allComments[matchId]) allComments[matchId] = [];
+  allComments[matchId].push({
+    id: `comment-${Date.now()}`,
+    user: user.psoUsername,
+    avatar: user.avatar,
+    text,
+    date: new Date().toISOString()
+  });
+  localStorage.setItem('pso_comments', JSON.stringify(allComments));
+  syncToCloud({});
+};
+
+export const deleteComment = (matchId, commentId) => {
+  const commentsStr = localStorage.getItem('pso_comments');
+  if (!commentsStr) return;
+  const allComments = JSON.parse(commentsStr);
+  if (!allComments[matchId]) return;
+  allComments[matchId] = allComments[matchId].filter(c => c.id !== commentId);
+  localStorage.setItem('pso_comments', JSON.stringify(allComments));
+  syncToCloud({});
+};
+
+export const updateComment = (matchId, commentId, newText) => {
+  const commentsStr = localStorage.getItem('pso_comments');
+  if (!commentsStr) return;
+  const allComments = JSON.parse(commentsStr);
+  if (!allComments[matchId]) return;
+  const comment = allComments[matchId].find(c => c.id === commentId);
+  if (comment) {
+    comment.text = newText;
+    comment.date = new Date().toISOString();
+    localStorage.setItem('pso_comments', JSON.stringify(allComments));
+    syncToCloud({});
+  }
+};
+
+export const getGlobalChat = () => {
+  const chat = localStorage.getItem('pso_global_chat');
+  return chat ? JSON.parse(chat) : [];
+};
+
+export const addGlobalChatMessage = (user, text) => {
+  if (!user || !text) return;
+  const chat = getGlobalChat();
+  chat.push({
+    id: `chat-${Date.now()}`,
+    user: user.psoUsername,
+    avatar: user.avatar,
+    text,
+    date: new Date().toISOString()
+  });
+  const limitedChat = chat.slice(-100);
+  localStorage.setItem('pso_global_chat', JSON.stringify(limitedChat));
+  syncToCloud({});
+};
+
+export const deleteGlobalChatMessage = (messageId) => {
+  const chat = getGlobalChat();
+  const updatedChat = chat.filter(m => m.id !== messageId);
+  localStorage.setItem('pso_global_chat', JSON.stringify(updatedChat));
+  syncToCloud({});
+};
+
 export const saveTOTW = (week, totw) => {
   const totwStr = localStorage.getItem('pso_totw_v1');
   const allTotw = totwStr ? JSON.parse(totwStr) : {};
