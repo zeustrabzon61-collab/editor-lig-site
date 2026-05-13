@@ -35,22 +35,37 @@ export const saveStorageData = (data) => {
   if (data.matches) localStorage.setItem('pso_matches', JSON.stringify(data.matches));
 };
 
-export const processMatchJSON = (jsonData) => {
+export const cleanTeamName = (n) => n.toUpperCase().replace(/\s+FC$|\s+F\.C\.$/g, '').trim();
+
+export const processMatchJSON = (jsonData, teamMappings = {}) => {
   const { teams, players, matches } = getStorageData();
   const match = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+
+  // Eşleştirmeleri Uygula
+  if (teamMappings.team1) match.team1Stats.teamName = teamMappings.team1;
+  if (teamMappings.team2) match.team2Stats.teamName = teamMappings.team2;
+  
+  // Oyuncu takımlarını da eşleştirmeye göre güncelle
+  match.team1PlayerStats.forEach(p => p.team = match.team1Stats.teamName);
+  match.team2PlayerStats.forEach(p => p.team = match.team2Stats.teamName);
 
   const t1 = match.team1Stats;
   const t2 = match.team2Stats;
 
   // Takımları Güncelle
   const updateTeam = (name, goalsFor, goalsAgainst) => {
-    let team = teams.find(t => t.name.toUpperCase() === name.toUpperCase());
+    const searchName = cleanTeamName(name);
+
+    let team = teams.find(t => {
+      const existingName = cleanTeamName(t.name);
+      return existingName === searchName || existingName.includes(searchName) || searchName.includes(existingName);
+    });
     
-    // Eğer takım listede yoksa (örneğin yabancı bir takımla maç yapılmışsa), listeye ekle
     if (!team) {
-      team = { name, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 };
+      team = { name, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0, logo: '/logos/default.png' };
       teams.push(team);
     }
+
 
     team.played += 1;
     team.gf += goalsFor;
@@ -74,11 +89,25 @@ export const processMatchJSON = (jsonData) => {
   const allPlayerStats = [...match.team1PlayerStats, ...match.team2PlayerStats];
   
   allPlayerStats.forEach(ps => {
-    let player = players.find(p => p.name === ps.playerName);
+    let player = players.find(p => p.name.toLowerCase() === ps.playerName.toLowerCase());
+    
+    // PSO'dan gelen veriyi temizle (postion hatasını ve farklı isimleri düzelt)
+    const rawPos = (ps.position || ps.postion || '').toUpperCase();
+    let finalPos = 'CM'; // Varsayılan
+    
+    if (rawPos.includes('GK')) finalPos = 'GK';
+    else if (rawPos.includes('LB')) finalPos = 'LB';
+    else if (rawPos.includes('RB')) finalPos = 'RB';
+    else if (rawPos.includes('LW')) finalPos = 'LW';
+    else if (rawPos.includes('RW')) finalPos = 'RW';
+    else if (rawPos.includes('CM') || rawPos.includes('MID')) finalPos = 'CM';
+
     if (!player) {
       player = { 
         name: ps.playerName, 
+        psoId: ps.playerId || '', 
         team: ps.team, 
+        position: finalPos,
         goals: 0, 
         assists: 0, 
         saves: 0, 
@@ -87,7 +116,13 @@ export const processMatchJSON = (jsonData) => {
         matches: 0 
       };
       players.push(player);
+    } else {
+      // Mevcut oyuncuyu güncelle
+      if (ps.playerId) player.psoId = ps.playerId;
+      player.position = finalPos;
+      player.team = ps.team;
     }
+
     
     player.matches += 1;
     player.goals += ps.goals;

@@ -1066,7 +1066,7 @@ body {
 
 .m-info-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   margin-bottom: 2.5rem;
   background: rgba(255, 255, 255, 0.03);
@@ -1154,4 +1154,36 @@ body {
   .m-info-grid { grid-template-columns: 1fr; }
   .m-stats-grid { grid-template-columns: 1fr; }
 }
+
+/* Mapping UI */
+.mapping-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mapping-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.mapping-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mapping-item label {
+  font-size: 0.85rem;
+}
+
+.mapping-item select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 0.8rem;
+  border-radius: 10px;
+}
+
 

@@ -9,7 +9,7 @@ const PlayerCard = ({ player, onClick }) => {
         <div className="fifa-card-inner">
           <div className="fifa-card-top">
             <div className="f-rating">{Math.min(99, 70 + (player.goals * 2) + (player.assists))}</div>
-            <div className="f-position">{player.position || 'ST'}</div>
+            <div className="f-position">{player.position || 'CM'}</div>
           </div>
           <div className="f-avatar-area">
             <User size={80} strokeWidth={1} />
@@ -39,7 +39,7 @@ const PlayersPage = () => {
   const [selectedPosition, setSelectedPosition] = useState('All');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
-  const positions = ['GK', 'DEF', 'MID', 'ATT'];
+  const positions = ['GK', 'LB', 'RB', 'CM', 'LW', 'RW'];
 
   const filteredPlayers = players.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -115,12 +115,8 @@ const PlayersPage = () => {
                   <span>#{selectedPlayer.psoId || 'Belirtilmedi'}</span>
                 </div>
                 <div className="m-info-item">
-                  <label>Forma No</label>
-                  <span>{selectedPlayer.shirtNumber || '--'}</span>
-                </div>
-                <div className="m-info-item">
                   <label>Mevki</label>
-                  <span>{selectedPlayer.position || 'ATT'}</span>
+                  <span>{selectedPlayer.position || 'CM'}</span>
                 </div>
               </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { processMatchJSON, getStorageData, saveStorageData } from '../utils/storage';
-import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList } from 'lucide-react';
+import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName } from '../utils/storage';
+import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList, Info } from 'lucide-react';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('json');
@@ -19,7 +19,11 @@ const AdminPanel = () => {
     playerStats: []
   });
 
-  const [newStat, setNewStat] = useState({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
+  const [newStat, setNewStat] = useState({ playerName: '', psoId: '', team: '', position: 'CM', goals: 0, assists: 0, saves: 0, tackles: 0 });
+  
+  const [showMapping, setShowMapping] = useState(false);
+  const [mappingData, setMappingData] = useState({ team1: '', team2: '', t1Original: '', t2Original: '' });
+  const [pendingJson, setPendingJson] = useState(null);
 
   const ADMIN_PASSWORD = 'Bulanahelalolsun611967';
 
@@ -60,13 +64,47 @@ const AdminPanel = () => {
   const handleJsonProcess = () => {
     try {
       if (!jsonInput.trim()) return;
-      processMatchJSON(jsonInput);
+      const match = JSON.parse(jsonInput);
+      
+      const checkTeam = (name) => {
+        const search = cleanTeamName(name);
+        return teams.find(t => {
+          const ex = cleanTeamName(t.name);
+          return ex === search || ex.includes(search) || search.includes(ex);
+        });
+      };
+
+      const t1Valid = checkTeam(match.team1Stats.teamName);
+      const t2Valid = checkTeam(match.team2Stats.teamName);
+
+      if (!t1Valid || !t2Valid) {
+        setPendingJson(match);
+        setMappingData({
+          t1Original: match.team1Stats.teamName,
+          t2Original: match.team2Stats.teamName,
+          team1: t1Valid ? t1Valid.name : teams[0].name,
+          team2: t2Valid ? t2Valid.name : teams[1].name
+        });
+        setShowMapping(true);
+        return;
+      }
+
+      processMatchJSON(match);
       setStatus({ type: 'success', message: 'JSON verileri başarıyla işlendi!' });
       setJsonInput('');
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
       setStatus({ type: 'error', message: 'Geçersiz JSON formatı!' });
     }
+  };
+
+  const confirmMapping = () => {
+    processMatchJSON(pendingJson, { team1: mappingData.team1, team2: mappingData.team2 });
+    setShowMapping(false);
+    setPendingJson(null);
+    setStatus({ type: 'success', message: 'Eşleştirme yapıldı ve maç kaydedildi!' });
+    setJsonInput('');
+    setTimeout(() => setStatus({ type: '', message: '' }), 3000);
   };
 
   const addPlayerStat = () => {
@@ -78,7 +116,7 @@ const AdminPanel = () => {
       ...prev,
       playerStats: [...prev.playerStats, { ...newStat }]
     }));
-    setNewStat({ playerName: '', psoId: '', shirtNumber: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
+    setNewStat({ playerName: '', psoId: '', team: '', position: 'CM', goals: 0, assists: 0, saves: 0, tackles: 0 });
   };
 
   const handleManualSave = () => {
@@ -108,12 +146,11 @@ const AdminPanel = () => {
       manualMatch.playerStats.forEach(ps => {
         let p = players.find(player => player.name === ps.playerName);
         if (!p) {
-          p = { name: ps.playerName, psoId: ps.psoId, shirtNumber: ps.shirtNumber, team: ps.team, position: ps.position, goals: 0, assists: 0, saves: 0, tackles: 0, interceptions: 0, matches: 0 };
+          p = { name: ps.playerName, psoId: ps.psoId, team: ps.team, position: ps.position, goals: 0, assists: 0, saves: 0, tackles: 0, interceptions: 0, matches: 0 };
           players.push(p);
         } else {
           p.position = ps.position;
           if (ps.psoId) p.psoId = ps.psoId;
-          if (ps.shirtNumber) p.shirtNumber = ps.shirtNumber;
         }
 
 
@@ -214,7 +251,6 @@ const AdminPanel = () => {
               <div className="player-stat-input-grid full-width">
                 <input type="text" placeholder="Oyuncu Adı" value={newStat.playerName} onChange={e => setNewStat({...newStat, playerName: e.target.value})} />
                 <input type="text" placeholder="PSO ID" value={newStat.psoId} onChange={e => setNewStat({...newStat, psoId: e.target.value})} />
-                <input type="text" placeholder="Forma No" value={newStat.shirtNumber} onChange={e => setNewStat({...newStat, shirtNumber: e.target.value})} />
                 <select value={newStat.team} onChange={e => setNewStat({...newStat, team: e.target.value})}>
                   <option value="">Takım Seç...</option>
                   <option value={manualMatch.team1}>{manualMatch.team1}</option>
@@ -222,9 +258,11 @@ const AdminPanel = () => {
                 </select>
                 <select value={newStat.position} onChange={e => setNewStat({...newStat, position: e.target.value})}>
                   <option value="GK">GK</option>
-                  <option value="DEF">DEF</option>
-                  <option value="MID">MID</option>
-                  <option value="ATT">ATT</option>
+                  <option value="LB">LB</option>
+                  <option value="RB">RB</option>
+                  <option value="CM">CM</option>
+                  <option value="LW">LW</option>
+                  <option value="RW">RW</option>
                 </select>
                 <input type="number" placeholder="Gol" value={newStat.goals} onChange={e => setNewStat({...newStat, goals: parseInt(e.target.value) || 0})} />
                 <input type="number" placeholder="Asist" value={newStat.assists} onChange={e => setNewStat({...newStat, assists: parseInt(e.target.value) || 0})} />
@@ -253,15 +291,42 @@ const AdminPanel = () => {
           )}
         </div>
         
-        <div className="glass-card">
-          <h3>Hızlı Eylemler</h3>
-          <div className="admin-actions">
-            <button className="btn-secondary" onClick={clearDatabase} style={{ color: '#ff4444', borderColor: 'rgba(255, 68, 68, 0.3)', width: '100%' }}>
-              <Trash2 size={18} /> Verileri Sıfırla
-            </button>
-          </div>
         </div>
       </div>
+
+      {showMapping && (
+        <div className="modal-overlay" onClick={() => setShowMapping(false)}>
+          <div className="glass-card modal-content" onClick={e => e.stopPropagation()}>
+            <div className="mapping-header">
+              <Info className="neon-text" size={32} />
+              <h3>Bilinmeyen Takım Tespit Edildi</h3>
+            </div>
+            <p style={{marginBottom: '2rem', color: 'var(--text-secondary)'}}>
+              JSON verisindeki takım isimleri ligdekilerle tam eşleşmedi. Lütfen doğruluğunu kontrol edin:
+            </p>
+
+            <div className="mapping-grid">
+              <div className="mapping-item">
+                <label>JSON'daki İsim: <strong>{mappingData.t1Original}</strong></label>
+                <select value={mappingData.team1} onChange={e => setMappingData({...mappingData, team1: e.target.value})}>
+                  {teams.map(t => <option key={t.name} value={t.name}>{t.name}</option>)}
+                </select>
+              </div>
+              <div className="mapping-item">
+                <label>JSON'daki İsim: <strong>{mappingData.t2Original}</strong></label>
+                <select value={mappingData.team2} onChange={e => setMappingData({...mappingData, team2: e.target.value})}>
+                  {teams.map(t => <option key={t.name} value={t.name}>{t.name}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="mapping-btns" style={{marginTop: '2rem', display: 'flex', gap: '1rem'}}>
+              <button className="btn-primary" onClick={confirmMapping} style={{flex: 1}}>Eşleştirmeyi Onayla</button>
+              <button className="btn-secondary" onClick={() => setShowMapping(false)}>İptal</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
