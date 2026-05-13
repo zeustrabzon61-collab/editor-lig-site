@@ -31,7 +31,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="container nav-content">
-        <NavLink to="/" className="logo">
+        <NavLink to="/" className="logo logo-hover-effect">
           <span className="logo-text">EDİTÖR <span className="neon-text">LİG</span></span>
         </NavLink>
         

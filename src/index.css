@@ -99,6 +99,16 @@ button {
   text-decoration: none;
   display: flex;
   align-items: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo-hover-effect:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 15px var(--accent-primary));
+}
+
+.logo-hover-effect:hover .logo-text {
+  text-shadow: 0 0 10px #fff, 0 0 20px var(--accent-primary);
 }
 
 .logo-text {
