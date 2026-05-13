@@ -102,32 +102,32 @@ export const getCurrentUser = () => {
   return user ? JSON.parse(user) : null;
 };
 
-export const loginUser = (email, password) => {
+export const loginUser = (psoId, password) => {
   const { users } = getStorageData();
-  const user = users.find(u => u.email === email && u.password === password);
+  const user = users.find(u => u.psoId === psoId && u.password === password);
   if (user) {
     localStorage.setItem('pso_current_user', JSON.stringify(user));
     return { success: true, user };
   }
-  return { success: false, message: 'E-posta veya şifre hatalı!' };
+  return { success: false, message: 'Geçersiz PSO ID veya şifre.' };
 };
 
-export const registerUser = (email, psoUsername, password) => {
-  const data = getStorageData();
-  if (data.users.find(u => u.email === email)) return { success: false, message: 'Bu e-posta zaten kayıtlı!' };
-  if (data.users.find(u => u.psoUsername.toLowerCase() === psoUsername.toLowerCase())) return { success: false, message: 'Bu PSO kullanıcı adı alınmış!' };
+export const registerUser = (psoId, psoUsername, password) => {
+  const { users } = getStorageData();
+  if (users.find(u => u.psoId === psoId)) {
+    return { success: false, message: 'Bu PSO ID zaten kayıtlı.' };
+  }
 
   const newUser = {
-    email,
+    psoId,
     psoUsername,
     password,
-    avatar: '',
-    about: '',
-    lookingForTeam: false
+    avatar: null,
+    stats: { played: 0, goals: 0, assists: 0 }
   };
 
-  data.users.push(newUser);
-  saveStorageData(data);
+  const updatedUsers = [...users, newUser];
+  localStorage.setItem('pso_users', JSON.stringify(updatedUsers));
   localStorage.setItem('pso_current_user', JSON.stringify(newUser));
   return { success: true, user: newUser };
 };

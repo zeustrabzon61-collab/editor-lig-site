@@ -4,7 +4,7 @@ import { User, Mail, Lock, LogIn, UserPlus, AlertCircle } from 'lucide-react';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
+  const [psoId, setPsoId] = useState('');
   const [password, setPassword] = useState('');
   const [psoUsername, setPsoUsername] = useState('');
   const [error, setError] = useState('');
@@ -14,18 +14,18 @@ const Auth = () => {
     setError('');
 
     if (isLogin) {
-      const res = loginUser(email, password);
+      const res = loginUser(psoId, password);
       if (res.success) {
         window.location.href = '/profile';
       } else {
         setError(res.message);
       }
     } else {
-      if (!email || !password || !psoUsername) {
+      if (!psoId || !password || !psoUsername) {
         setError('Lütfen tüm alanları doldurun.');
         return;
       }
-      const res = registerUser(email, psoUsername, password);
+      const res = registerUser(psoId, psoUsername, password);
       if (res.success) {
         window.location.href = '/profile';
       } else {
@@ -49,16 +49,18 @@ const Auth = () => {
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="input-group">
+            <Mail size={18} />
+            <input type="text" placeholder="PSO ID (Örn: dooukqkT)" value={psoId} onChange={e => setPsoId(e.target.value)} />
+          </div>
+
           {!isLogin && (
             <div className="input-group">
               <User size={18} />
               <input type="text" placeholder="PSO Kullanıcı Adı (Oyundaki Adın)" value={psoUsername} onChange={e => setPsoUsername(e.target.value)} />
             </div>
           )}
-          <div className="input-group">
-            <Mail size={18} />
-            <input type="email" placeholder="E-posta Adresi" value={email} onChange={e => setEmail(e.target.value)} />
-          </div>
+          
           <div className="input-group">
             <Lock size={18} />
             <input type="password" placeholder="Şifre" value={password} onChange={e => setPassword(e.target.value)} />
