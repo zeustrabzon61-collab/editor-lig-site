@@ -22,7 +22,7 @@ export const getStorageData = () => {
     }
     return t;
   });
-
+  return {
     teams,
     players: players ? JSON.parse(players) : [],
     matches: matches ? JSON.parse(matches) : [],
