@@ -259,7 +259,17 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
     score1: t1.goals,
     score2: t2.goals,
     scorers: matchScorers,
-    assists: matchAssists
+    assists: matchAssists,
+    playerStats: allPlayerStats.map(ps => ({
+      name: ps.playerName,
+      team: ps.team,
+      position: ps.position || ps.postion || 'CM',
+      goals: parseInt(ps.goals || 0),
+      assists: parseInt(ps.assists || 0),
+      saves: parseInt(ps.gKSaves || ps.saves || 0),
+      tackles: parseInt(ps.tackles || 0),
+      interceptions: parseInt(ps.interceptions || 0)
+    }))
   });
 
   saveStorageData({ teams, players, matches });

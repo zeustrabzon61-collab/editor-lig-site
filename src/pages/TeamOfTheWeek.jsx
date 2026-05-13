@@ -6,22 +6,35 @@ const TeamOfTheWeek = () => {
   const { players, matches: storedMatches } = getStorageData();
   
   // Haftada 2 maç olduğu varsayımıyla (4 takım)
-  const isPlayed = storedMatches.length >= selectedWeek * 2;
+  const weekMatches = storedMatches.slice((selectedWeek - 1) * 2, selectedWeek * 2);
+  const isPlayed = weekMatches.length > 0;
 
-  // Demo amaçlı, genel istatistiklere göre mevkideki en iyi oyuncuyu seçiyoruz
-  // Gerçek uygulamada bu haftalık maç verilerinden filtrelenmelidir.
+  // Haftalık maçlardan oyuncu performanslarını topla
+  const weekPerformances = [];
+  weekMatches.forEach(m => {
+    if (m.playerStats) {
+      weekPerformances.push(...m.playerStats);
+    }
+  });
+
   const getTopPlayerByPos = (posFilter) => {
-    const posPlayers = players.filter(p => posFilter.includes(p.position));
-    if (posPlayers.length === 0) return { name: 'Seçilmedi', team: '-', position: posFilter[0] };
+    // Önce bu haftanın performanslarına bak
+    let pool = weekPerformances.filter(p => posFilter.includes(p.position));
     
-    return posPlayers.sort((a, b) => {
-      const scoreA = (a.goals * 3) + (a.assists * 2) + (a.saves * 3) + a.interceptions;
-      const scoreB = (b.goals * 3) + (b.assists * 2) + (b.saves * 3) + b.interceptions;
+    // Eğer bu hafta o mevkide kimse yoksa (eski veri durumu), genel listeye bak (fallback)
+    if (pool.length === 0) {
+      pool = players.filter(p => posFilter.includes(p.position));
+    }
+
+    if (pool.length === 0) return { name: 'Seçilmedi', team: '-', position: posFilter[0] };
+    
+    return pool.sort((a, b) => {
+      const scoreA = (a.goals * 3) + (a.assists * 2) + (a.saves * 3) + (a.tackles * 1.5) + a.interceptions;
+      const scoreB = (b.goals * 3) + (b.assists * 2) + (b.saves * 3) + (b.tackles * 1.5) + b.interceptions;
       return scoreB - scoreA;
     })[0];
   };
 
-  // Mevkilere göre rastgelelik katmak için biraz shuffle edebiliriz ama genel seçelim
   const totw = {
     GK: getTopPlayerByPos(['GK']),
     LB: getTopPlayerByPos(['LB', 'LWB', 'DEF']),
