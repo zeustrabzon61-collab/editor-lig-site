@@ -1,4 +1,3 @@
-import React from 'react';
 import Standings from '../components/Standings';
 import Hero from '../components/Hero';
 import { getStorageData } from '../utils/storage';
@@ -6,8 +5,13 @@ import { Calendar, Trophy, BarChart3, ArrowRight } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
 const Home = () => {
-  const { matches } = getStorageData();
+  const { matches, teams } = getStorageData();
   const recentMatches = matches.slice(-3).reverse();
+
+  const getLogo = (teamName) => {
+    const team = teams.find(t => t.name.toUpperCase() === teamName.toUpperCase());
+    return team ? team.logo : null;
+  };
 
   return (
     <div className="home-page">
@@ -34,7 +38,11 @@ const Home = () => {
                 <div key={idx} className="glass-card result-card">
                   <div className="r-teams">
                     <div className="r-team">
-                      <div className="r-logo">{match.team1[0]}</div>
+                      {getLogo(match.team1) ? (
+                        <img src={getLogo(match.team1)} alt={match.team1} className="r-logo-img" />
+                      ) : (
+                        <div className="r-logo">{match.team1[0]}</div>
+                      )}
                       <span className="r-name">{match.team1}</span>
                     </div>
                     <div className="r-score-box">
@@ -43,7 +51,11 @@ const Home = () => {
                       <span className="r-score">{match.score2}</span>
                     </div>
                     <div className="r-team">
-                      <div className="r-logo">{match.team2[0]}</div>
+                      {getLogo(match.team2) ? (
+                        <img src={getLogo(match.team2)} alt={match.team2} className="r-logo-img" />
+                      ) : (
+                        <div className="r-logo">{match.team2[0]}</div>
+                      )}
                       <span className="r-name">{match.team2}</span>
                     </div>
                   </div>
