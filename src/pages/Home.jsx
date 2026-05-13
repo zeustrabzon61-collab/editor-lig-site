@@ -1,3 +1,4 @@
+import React from 'react';
 import Standings from '../components/Standings';
 import Hero from '../components/Hero';
 import { getStorageData } from '../utils/storage';
@@ -6,7 +7,15 @@ import { NavLink } from 'react-router-dom';
 import NewsTicker from '../components/NewsTicker';
 
 const Home = () => {
-  const { matches, teams } = getStorageData();
+  const [data, setData] = React.useState(getStorageData());
+
+  React.useEffect(() => {
+    const handleSync = () => setData(getStorageData());
+    window.addEventListener('storage', handleSync);
+    return () => window.removeEventListener('storage', handleSync);
+  }, []);
+
+  const { matches, teams } = data;
   const recentMatches = matches.slice(-3).reverse();
 
   const getLogo = (teamName) => {

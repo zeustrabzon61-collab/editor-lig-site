@@ -1,3 +1,4 @@
+import React from 'react';
 import { getStorageData } from '../utils/storage';
 
 const Standings = () => {
