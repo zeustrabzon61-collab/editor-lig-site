@@ -115,12 +115,8 @@ const PlayersPage = () => {
                   <span>#{selectedPlayer.psoId || 'Belirtilmedi'}</span>
                 </div>
                 <div className="m-info-item">
-                  <label>Forma No</label>
-                  <span>{selectedPlayer.shirtNumber || '--'}</span>
-                </div>
-                <div className="m-info-item">
                   <label>Mevki</label>
-                  <span>{selectedPlayer.position || 'ATT'}</span>
+                  <span>{selectedPlayer.position || 'CM'}</span>
                 </div>
               </div>
 

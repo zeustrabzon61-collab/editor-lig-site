@@ -90,11 +90,15 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   
   allPlayerStats.forEach(ps => {
     let player = players.find(p => p.name === ps.playerName);
+    // PSO JSON'da 'postion' yazım hatası olabiliyor, ikisini de kontrol et
+    const pos = ps.position || ps.postion || 'CM';
+    
     if (!player) {
       player = { 
         name: ps.playerName, 
         psoId: ps.playerId || '', 
         team: ps.team, 
+        position: pos,
         goals: 0, 
         assists: 0, 
         saves: 0, 
@@ -103,8 +107,10 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
         matches: 0 
       };
       players.push(player);
-    } else if (!player.psoId && ps.playerId) {
-      player.psoId = ps.playerId;
+    } else {
+      if (!player.psoId && ps.playerId) player.psoId = ps.playerId;
+      // Mevkiyi güncelle
+      player.position = pos;
     }
 
     
