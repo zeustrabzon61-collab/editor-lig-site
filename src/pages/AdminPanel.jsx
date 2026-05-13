@@ -205,7 +205,7 @@ const AdminPanel = () => {
     <div className="page-container container">
       <div className="admin-header">
         <h2 className="section-title">Admin <span className="neon-text">Paneli</span></h2>
-        <button className="btn-logout" onClick={handleLogout}><LogOut size={18} /> Çıkış Yap</button>
+        <button className="btn-secondary" onClick={handleLogout}><LogOut size={18} /> Çıkış Yap</button>
       </div>
 
       <div className="admin-tabs">
