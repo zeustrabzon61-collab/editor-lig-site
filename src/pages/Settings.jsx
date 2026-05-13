@@ -46,34 +46,8 @@ const Settings = () => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 250;
-          const MAX_HEIGHT = 250;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          setAvatar(canvas.toDataURL('image/jpeg', 0.8));
-        };
-        img.src = event.target.result;
+      reader.onloadend = () => {
+        setAvatar(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -121,15 +95,20 @@ const Settings = () => {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
           <div className="input-group-vertical">
-            <label>Mevki (Örn: ST, CM)</label>
-            <input 
-              type="text" 
-              placeholder="CM" 
-              maxLength="3"
+            <label>Mevki</label>
+            <select 
               value={position} 
-              onChange={e => setPosition(e.target.value.toUpperCase())} 
-              style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
-            />
+              onChange={e => setPosition(e.target.value)} 
+              style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px', cursor: 'pointer' }}
+            >
+              <option value="" style={{ color: 'black' }}>Seçiniz</option>
+              <option value="GK" style={{ color: 'black' }}>GK</option>
+              <option value="LB" style={{ color: 'black' }}>LB</option>
+              <option value="RB" style={{ color: 'black' }}>RB</option>
+              <option value="CM" style={{ color: 'black' }}>CM</option>
+              <option value="LW" style={{ color: 'black' }}>LW</option>
+              <option value="RW" style={{ color: 'black' }}>RW</option>
+            </select>
           </div>
           <div className="input-group-vertical">
             <label>Forma No</label>
@@ -138,15 +117,20 @@ const Settings = () => {
               placeholder="10" 
               min="1" max="99"
               value={jerseyNumber} 
-              onChange={e => setJerseyNumber(e.target.value)} 
+              onChange={e => {
+                const val = parseInt(e.target.value);
+                if (!e.target.value || (val >= 1 && val <= 99)) {
+                  setJerseyNumber(e.target.value);
+                }
+              }} 
               style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
             />
           </div>
           <div className="input-group-vertical">
-            <label>PSO ID (Steam)</label>
+            <label>PSO ID</label>
             <input 
               type="text" 
-              placeholder="SteamID64" 
+              placeholder="PSO ID" 
               value={psoId} 
               onChange={e => setPsoId(e.target.value)} 
               style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', padding: '1rem', color: 'white', borderRadius: '10px' }}
