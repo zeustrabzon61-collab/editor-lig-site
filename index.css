@@ -443,6 +443,66 @@ body {
   letter-spacing: 1px;
 }
 
+.p-pos-badge {
+  font-size: 0.7rem;
+  background: rgba(0, 242, 255, 0.1);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 800;
+}
+
+.p-badges {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.filters-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-end;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.filter-selects {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.filter-group label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 0.8rem 1rem !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  cursor: pointer;
+}
+
+.filter-group select option {
+  background: #0a0a14;
+}
+
+
 .p-stats-summary {
   margin-left: auto;
   display: flex;

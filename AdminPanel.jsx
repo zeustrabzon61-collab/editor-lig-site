@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { processMatchJSON, getStorageData, saveStorageData } from '../utils/storage';
-import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, UserPlus, Save, ClipboardList } from 'lucide-react';
+import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList } from 'lucide-react';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('json');
@@ -19,7 +19,7 @@ const AdminPanel = () => {
     playerStats: []
   });
 
-  const [newStat, setNewStat] = useState({ playerName: '', team: '', goals: 0, assists: 0, saves: 0, tackles: 0 });
+  const [newStat, setNewStat] = useState({ playerName: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
 
   const ADMIN_PASSWORD = 'Bulanahelalolsun611967';
 
@@ -78,7 +78,7 @@ const AdminPanel = () => {
       ...prev,
       playerStats: [...prev.playerStats, { ...newStat }]
     }));
-    setNewStat({ playerName: '', team: '', goals: 0, assists: 0, saves: 0, tackles: 0 });
+    setNewStat({ playerName: '', team: '', position: 'ATT', goals: 0, assists: 0, saves: 0, tackles: 0 });
   };
 
   const handleManualSave = () => {
@@ -108,9 +108,13 @@ const AdminPanel = () => {
       manualMatch.playerStats.forEach(ps => {
         let p = players.find(player => player.name === ps.playerName);
         if (!p) {
-          p = { name: ps.playerName, team: ps.team, goals: 0, assists: 0, saves: 0, tackles: 0, interceptions: 0, matches: 0 };
+          p = { name: ps.playerName, team: ps.team, position: ps.position, goals: 0, assists: 0, saves: 0, tackles: 0, interceptions: 0, matches: 0 };
           players.push(p);
+        } else {
+          // Pozisyonu güncelle (opsiyonel)
+          p.position = ps.position;
         }
+
         p.matches += 1;
         p.goals += Number(ps.goals);
         p.assists += Number(ps.assists);
@@ -212,6 +216,12 @@ const AdminPanel = () => {
                   <option value={manualMatch.team1}>{manualMatch.team1}</option>
                   <option value={manualMatch.team2}>{manualMatch.team2}</option>
                 </select>
+                <select value={newStat.position} onChange={e => setNewStat({...newStat, position: e.target.value})}>
+                  <option value="GK">GK</option>
+                  <option value="DEF">DEF</option>
+                  <option value="MID">MID</option>
+                  <option value="ATT">ATT</option>
+                </select>
                 <input type="number" placeholder="Gol" value={newStat.goals} onChange={e => setNewStat({...newStat, goals: parseInt(e.target.value) || 0})} />
                 <input type="number" placeholder="Asist" value={newStat.assists} onChange={e => setNewStat({...newStat, assists: parseInt(e.target.value) || 0})} />
                 <button className="btn-add-stat" onClick={addPlayerStat} title="Ekle"><Plus size={18} /></button>
@@ -220,7 +230,7 @@ const AdminPanel = () => {
               <ul className="added-stats-list">
                 {manualMatch.playerStats.map((ps, idx) => (
                   <li key={idx}>
-                    <strong>{ps.playerName}</strong> ({ps.team}) - {ps.goals} Gol, {ps.assists} Asist
+                    <strong>{ps.playerName}</strong> ({ps.team} - {ps.position}) - {ps.goals} Gol, {ps.assists} Asist
                   </li>
                 ))}
               </ul>
