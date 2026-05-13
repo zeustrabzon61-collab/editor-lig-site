@@ -90,15 +90,24 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   
   allPlayerStats.forEach(ps => {
     let player = players.find(p => p.name.toLowerCase() === ps.playerName.toLowerCase());
-    // PSO JSON'da 'postion' yazım hatası olabiliyor, ikisini de kontrol et
-    const pos = ps.position || ps.postion || 'CM';
     
+    // PSO'dan gelen veriyi temizle (postion hatasını ve farklı isimleri düzelt)
+    const rawPos = (ps.position || ps.postion || '').toUpperCase();
+    let finalPos = 'CM'; // Varsayılan
+    
+    if (rawPos.includes('GK')) finalPos = 'GK';
+    else if (rawPos.includes('LB')) finalPos = 'LB';
+    else if (rawPos.includes('RB')) finalPos = 'RB';
+    else if (rawPos.includes('LW')) finalPos = 'LW';
+    else if (rawPos.includes('RW')) finalPos = 'RW';
+    else if (rawPos.includes('CM') || rawPos.includes('MID')) finalPos = 'CM';
+
     if (!player) {
       player = { 
         name: ps.playerName, 
         psoId: ps.playerId || '', 
         team: ps.team, 
-        position: pos,
+        position: finalPos,
         goals: 0, 
         assists: 0, 
         saves: 0, 
@@ -108,9 +117,10 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
       };
       players.push(player);
     } else {
-      if (!player.psoId && ps.playerId) player.psoId = ps.playerId;
-      // Mevkiyi güncelle
-      player.position = pos;
+      // Mevcut oyuncuyu güncelle
+      if (ps.playerId) player.psoId = ps.playerId;
+      player.position = finalPos;
+      player.team = ps.team;
     }
 
     
