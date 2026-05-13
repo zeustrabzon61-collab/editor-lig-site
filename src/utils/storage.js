@@ -203,6 +203,7 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
 
   // Maç Geçmişine Ekle
   matches.push({
+    id: `match-${Date.now()}`,
     date: new Date().toISOString(),
     team1: t1.teamName,
     team2: t2.teamName,
@@ -214,4 +215,28 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
 
   saveStorageData({ teams, players, matches });
   return { teams, players, matches };
+};
+
+export const getComments = (matchId) => {
+  const comments = localStorage.getItem('pso_comments');
+  if (!comments) return [];
+  const allComments = JSON.parse(comments);
+  return allComments[matchId] || [];
+};
+
+export const addComment = (matchId, user, text) => {
+  if (!user || !text) return;
+  const comments = localStorage.getItem('pso_comments');
+  const allComments = comments ? JSON.parse(comments) : {};
+  if (!allComments[matchId]) allComments[matchId] = [];
+  
+  allComments[matchId].push({
+    id: `comment-${Date.now()}`,
+    user: user.psoUsername,
+    avatar: user.avatar,
+    text,
+    date: new Date().toISOString()
+  });
+  
+  localStorage.setItem('pso_comments', JSON.stringify(allComments));
 };
