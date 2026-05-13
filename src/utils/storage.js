@@ -1,8 +1,8 @@
 const INITIAL_TEAMS = [
-  { name: 'BAY FC', logo: 'https://i.ibb.co/pX1L5K1/bay-logo.png', played: 1, won: 0, drawn: 0, lost: 1, gf: 2, ga: 3, points: 0 },
-  { name: 'HAYAT OKULU FC', logo: 'https://i.ibb.co/mS5S8k7/hayat-okulu.png', played: 1, won: 1, drawn: 0, lost: 0, gf: 3, ga: 2, points: 3 },
-  { name: 'OOG FC', logo: 'https://i.ibb.co/vY5T6N9/oog-fc.png', played: 1, won: 0, drawn: 1, lost: 0, gf: 4, ga: 4, points: 1 },
-  { name: 'ANTONY ULTRAS FC', logo: 'https://i.ibb.co/VqXNqN8/antony-ultras.png', played: 1, won: 0, drawn: 1, lost: 0, gf: 4, ga: 4, points: 1 },
+  { name: 'BAY FC', logo: '/logos/bay_fc.png', played: 1, won: 0, drawn: 0, lost: 1, gf: 2, ga: 3, points: 0 },
+  { name: 'HAYAT OKULU FC', logo: '/logos/hayat_okulu.png', played: 1, won: 1, drawn: 0, lost: 0, gf: 3, ga: 2, points: 3 },
+  { name: 'OOG FC', logo: '/logos/oog.png', played: 1, won: 0, drawn: 1, lost: 0, gf: 4, ga: 4, points: 1 },
+  { name: 'ANTONY ULTRAS FC', logo: '/logos/antony_ultras.png', played: 1, won: 0, drawn: 1, lost: 0, gf: 4, ga: 4, points: 1 },
 ];
 
 const INITIAL_PLAYERS = [
@@ -66,7 +66,7 @@ export const getStorageData = () => {
   const teamsStr = localStorage.getItem('pso_teams');
   const playersStr = localStorage.getItem('pso_players');
   const matchesStr = localStorage.getItem('pso_matches');
-  const usersStr = localStorage.getItem('pso_users_v2'); // Yeni anahtar ile eski hesapları sıfırladık
+  const usersStr = localStorage.getItem('pso_users_v3'); 
 
   let teams = teamsStr ? JSON.parse(teamsStr) : INITIAL_TEAMS;
   let players = playersStr ? JSON.parse(playersStr) : INITIAL_PLAYERS;
@@ -93,11 +93,11 @@ export const saveStorageData = (data) => {
   if (data.teams) localStorage.setItem('pso_teams', JSON.stringify(data.teams));
   if (data.players) localStorage.setItem('pso_players', JSON.stringify(data.players));
   if (data.matches) localStorage.setItem('pso_matches', JSON.stringify(data.matches));
-  if (data.users) localStorage.setItem('pso_users_v2', JSON.stringify(data.users));
+  if (data.users) localStorage.setItem('pso_users_v3', JSON.stringify(data.users));
 };
 
 export const getCurrentUser = () => {
-  const user = localStorage.getItem('pso_current_user_v2');
+  const user = localStorage.getItem('pso_current_user_v3');
   return user ? JSON.parse(user) : null;
 };
 
@@ -105,25 +105,25 @@ export const loginUser = (psoId, password) => {
   const { users } = getStorageData();
   const user = users.find(u => u.psoId === psoId && u.password === password);
   if (user) {
-    localStorage.setItem('pso_current_user_v2', JSON.stringify(user));
+    localStorage.setItem('pso_current_user_v3', JSON.stringify(user));
     return { success: true, user };
   }
   return { success: false, message: 'Geçersiz PSO ID veya şifre.' };
 };
 
 export const logoutUser = () => {
-  localStorage.removeItem('pso_current_user_v2');
+  localStorage.removeItem('pso_current_user_v3');
 };
 
 export const registerUser = (psoId, password) => {
-  const { users } = getStorageData();
+  const { users, players } = getStorageData();
   if (users.find(u => u.psoId === psoId)) {
     return { success: false, message: 'Bu PSO ID zaten kayıtlı.' };
   }
 
-  // Eğer bu ID INITIAL_PLAYERS içinde varsa ismini oradan al, yoksa ID'yi isim olarak kullan
-  const knownPlayer = INITIAL_PLAYERS.find(p => p.psoId === psoId);
-  const psoUsername = knownPlayer ? knownPlayer.name : `Oyuncu_${psoId}`;
+  // Önce kaydedilmiş oyuncular (maç verilerinden gelen) arasında ara, yoksa INITIAL_PLAYERS'da ara
+  const existingPlayer = players.find(p => p.psoId === psoId) || INITIAL_PLAYERS.find(p => p.psoId === psoId);
+  const psoUsername = existingPlayer ? existingPlayer.name : `Oyuncu_${psoId}`;
 
   const newUser = {
     psoId,
@@ -134,18 +134,22 @@ export const registerUser = (psoId, password) => {
   };
 
   const updatedUsers = [...users, newUser];
-  localStorage.setItem('pso_users_v2', JSON.stringify(updatedUsers));
-  localStorage.setItem('pso_current_user_v2', JSON.stringify(newUser));
+  localStorage.setItem('pso_users_v3', JSON.stringify(updatedUsers));
+  localStorage.setItem('pso_current_user_v3', JSON.stringify(newUser));
   return { success: true, user: newUser };
 };
 
-export const updateUserProfile = (psoUsername, updates) => {
+export const updateUserProfile = (psoId, updates) => {
   const data = getStorageData();
-  const userIndex = data.users.findIndex(u => u.psoUsername === psoUsername);
+  const userIndex = data.users.findIndex(u => u.psoId === psoId);
   if (userIndex !== -1) {
     data.users[userIndex] = { ...data.users[userIndex], ...updates };
-    saveStorageData(data);
-    localStorage.setItem('pso_current_user', JSON.stringify(data.users[userIndex]));
+    
+    // Global user listesini de güncelle (v3 anahtarı ile)
+    localStorage.setItem('pso_users_v3', JSON.stringify(data.users));
+    
+    // Oturumdaki kullanıcıyı güncelle
+    localStorage.setItem('pso_current_user_v3', JSON.stringify(data.users[userIndex]));
     return true;
   }
   return false;

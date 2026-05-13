@@ -4,6 +4,7 @@ import { User, Image as ImageIcon, Save, Info, ShieldAlert } from 'lucide-react'
 
 const Settings = () => {
   const [user, setUser] = useState(null);
+  const [psoUsername, setPsoUsername] = useState('');
   const [avatar, setAvatar] = useState('');
   const [about, setAbout] = useState('');
   const [lookingForTeam, setLookingForTeam] = useState(false);
@@ -19,6 +20,7 @@ const Settings = () => {
       window.location.href = '/auth';
     } else {
       setUser(currentUser);
+      setPsoUsername(currentUser.psoUsername || '');
       setAvatar(currentUser.avatar || '');
       setAbout(currentUser.about || '');
       setLookingForTeam(currentUser.lookingForTeam || false);
@@ -29,11 +31,11 @@ const Settings = () => {
   }, []);
 
   const handleSave = () => {
-    const updates = { avatar, about, lookingForTeam, position, psoId, jerseyNumber };
+    const updates = { psoUsername, avatar, about, lookingForTeam, position, psoId, jerseyNumber };
     if (newPassword.trim()) {
       updates.password = newPassword.trim();
     }
-    const success = updateUserProfile(user.psoUsername, updates);
+    const success = updateUserProfile(user.psoId, updates);
     if (success) {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -69,9 +71,14 @@ const Settings = () => {
               <User size={60} strokeWidth={1} color="rgba(255,255,255,0.5)" />
             )}
           </div>
-          <div>
-            <h3 className="neon-text" style={{ fontSize: '1.8rem', margin: 0 }}>{user.psoUsername}</h3>
-            <p style={{ color: 'var(--text-secondary)', margin: '0.5rem 0 0 0' }}>{user.email}</p>
+          <div style={{ flex: 1 }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', marginBottom: '0.5rem', display: 'block' }}>Karttaki İsmin (PSO Adın)</label>
+            <input 
+              type="text" 
+              value={psoUsername} 
+              onChange={e => setPsoUsername(e.target.value)} 
+              style={{ width: '100%', fontSize: '1.5rem', fontWeight: '900', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--accent-primary)', padding: '0.5rem 1rem', color: 'white', borderRadius: '10px' }}
+            />
           </div>
         </div>
 
