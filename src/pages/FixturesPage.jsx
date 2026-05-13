@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStorageData, cleanTeamName, getComments, addComment, getCurrentUser } from '../utils/storage';
+import { getStorageData, cleanTeamName, getComments, addComment, getCurrentUser, deleteComment, updateComment } from '../utils/storage';
 import { MessageSquare, Send, X, User } from 'lucide-react';
 
 const FixturesPage = () => {
@@ -20,6 +20,24 @@ const FixturesPage = () => {
     setCommentText('');
     loadComments(selectedMatch.id || `${selectedMatch.team1}-${selectedMatch.team2}-${selectedMatch.score1}`);
   };
+  const [editingComment, setEditingComment] = React.useState(null);
+  const [editText, setEditText] = React.useState('');
+  const isAdmin = localStorage.getItem('pso_admin_auth') === 'true';
+
+  const handleDeleteComment = (commentId) => {
+    if (!window.confirm('Yorumu silmek istediğinize emin misiniz?')) return;
+    deleteComment(selectedMatch.id || `${selectedMatch.team1}-${selectedMatch.team2}-${selectedMatch.score1}`, commentId);
+    loadComments(selectedMatch.id || `${selectedMatch.team1}-${selectedMatch.team2}-${selectedMatch.score1}`);
+  };
+
+  const handleUpdateComment = () => {
+    if (!editText.trim() || !editingComment) return;
+    updateComment(selectedMatch.id || `${selectedMatch.team1}-${selectedMatch.team2}-${selectedMatch.score1}`, editingComment.id, editText);
+    setEditingComment(null);
+    setEditText('');
+    loadComments(selectedMatch.id || `${selectedMatch.team1}-${selectedMatch.team2}-${selectedMatch.score1}`);
+  };
+
   const teams = storedTeams.map(t => t.name);
 
   const getLogo = (teamName) => {
@@ -191,33 +209,94 @@ const FixturesPage = () => {
               <X size={24} />
             </button>
 
-            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '800', marginBottom: '1rem' }}>MAÇ DETAYLARI</div>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <img src={getLogo(selectedMatch.team1)} style={{ width: '60px', height: '60px', objectFit: 'contain' }} alt="" />
-                  <div style={{ fontWeight: '900', marginTop: '0.5rem' }}>{selectedMatch.team1}</div>
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '800', marginBottom: '1.5rem', letterSpacing: '2px' }}>MAÇ SONUCU</div>
+              
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                {/* Team 1 */}
+                <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div style={{ 
+                    width: '90px', height: '90px', 
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)', 
+                    borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                    padding: '12px', marginBottom: '1rem', border: '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+                  }}>
+                    <img src={getLogo(selectedMatch.team1)} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
+                  </div>
+                  <div style={{ fontWeight: '900', fontSize: '0.9rem', color: '#fff', maxWidth: '140px' }}>{selectedMatch.team1}</div>
                 </div>
-                <div style={{ fontSize: '3rem', fontWeight: '900', color: 'var(--accent-primary)' }}>{selectedMatch.score1} - {selectedMatch.score2}</div>
-                <div style={{ textAlign: 'center' }}>
-                  <img src={getLogo(selectedMatch.team2)} style={{ width: '60px', height: '60px', objectFit: 'contain' }} alt="" />
-                  <div style={{ fontWeight: '900', marginTop: '0.5rem' }}>{selectedMatch.team2}</div>
+
+                {/* Score */}
+                <div style={{ flex: '0 0 140px', textAlign: 'center' }}>
+                  <div style={{ 
+                    fontSize: '4.5rem', fontWeight: '900', color: '#fff', 
+                    textShadow: '0 0 30px rgba(0, 242, 255, 0.5)', 
+                    lineHeight: 1, fontStyle: 'italic'
+                  }}>
+                    {selectedMatch.score1}<span style={{ color: 'var(--accent-primary)', fontSize: '2rem', margin: '0 10px', verticalAlign: 'middle', fontStyle: 'normal' }}>-</span>{selectedMatch.score2}
+                  </div>
+                </div>
+
+                {/* Team 2 */}
+                <div style={{ flex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div style={{ 
+                    width: '90px', height: '90px', 
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)', 
+                    borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                    padding: '12px', marginBottom: '1rem', border: '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+                  }}>
+                    <img src={getLogo(selectedMatch.team2)} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="" />
+                  </div>
+                  <div style={{ fontWeight: '900', fontSize: '0.9rem', color: '#fff', maxWidth: '140px' }}>{selectedMatch.team2}</div>
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
-              <div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: '800', marginBottom: '0.5rem' }}>{selectedMatch.team1.split(' ')[0]} GOLLER</div>
-                {selectedMatch.t1Scorers.map((s, i) => <div key={i} style={{ fontSize: '0.9rem' }}>⚽ {s.playerName} ({s.goals})</div>)}
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: '800', marginTop: '1rem', marginBottom: '0.5rem' }}>ASİSTLER</div>
-                {selectedMatch.t1Assists.map((a, i) => <div key={i} style={{ fontSize: '0.9rem' }}>👟 {a.playerName} ({a.assists})</div>)}
+            <div style={{ 
+              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', 
+              marginBottom: '2.5rem', background: 'rgba(255,255,255,0.05)', 
+              borderRadius: '15px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' 
+            }}>
+              <div style={{ padding: '1.5rem', background: 'rgba(6, 14, 29, 0.4)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--accent-primary)', fontWeight: '800', marginBottom: '1rem', textTransform: 'uppercase' }}>GOLLER</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {selectedMatch.t1Scorers.length > 0 ? selectedMatch.t1Scorers.map((s, i) => (
+                    <div key={i} style={{ fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ color: 'var(--accent-primary)' }}>⚽</span> {s.playerName} <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>({s.goals})</span>
+                    </div>
+                  )) : <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>-</div>}
+                </div>
+                
+                <div style={{ fontSize: '0.7rem', color: 'var(--accent-primary)', fontWeight: '800', marginTop: '1.5rem', marginBottom: '1rem', textTransform: 'uppercase' }}>ASİSTLER</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {selectedMatch.t1Assists.length > 0 ? selectedMatch.t1Assists.map((a, i) => (
+                    <div key={i} style={{ fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ opacity: 0.7 }}>👟</span> {a.playerName} <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>({a.assists})</span>
+                    </div>
+                  )) : <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>-</div>}
+                </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: '800', marginBottom: '0.5rem' }}>{selectedMatch.team2.split(' ')[0]} GOLLER</div>
-                {selectedMatch.t2Scorers.map((s, i) => <div key={i} style={{ fontSize: '0.9rem' }}>{s.playerName} ({s.goals}) ⚽</div>)}
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: '800', marginTop: '1rem', marginBottom: '0.5rem' }}>ASİSTLER</div>
-                {selectedMatch.t2Assists.map((a, i) => <div key={i} style={{ fontSize: '0.9rem' }}>{a.playerName} ({a.assists}) 👟</div>)}
+
+              <div style={{ padding: '1.5rem', background: 'rgba(6, 14, 29, 0.4)', textAlign: 'right' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--accent-primary)', fontWeight: '800', marginBottom: '1rem', textTransform: 'uppercase' }}>GOLLER</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {selectedMatch.t2Scorers.length > 0 ? selectedMatch.t2Scorers.map((s, i) => (
+                    <div key={i} style={{ fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                       <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>({s.goals})</span> {s.playerName} <span style={{ color: 'var(--accent-primary)' }}>⚽</span>
+                    </div>
+                  )) : <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>-</div>}
+                </div>
+
+                <div style={{ fontSize: '0.7rem', color: 'var(--accent-primary)', fontWeight: '800', marginTop: '1.5rem', marginBottom: '1rem', textTransform: 'uppercase' }}>ASİSTLER</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {selectedMatch.t2Assists.length > 0 ? selectedMatch.t2Assists.map((a, i) => (
+                    <div key={i} style={{ fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                       <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>({a.assists})</span> {a.playerName} <span style={{ opacity: 0.7 }}>👟</span>
+                    </div>
+                  )) : <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>-</div>}
+                </div>
               </div>
             </div>
 
@@ -226,7 +305,7 @@ const FixturesPage = () => {
                 <MessageSquare size={18} className="neon-text" /> Yorumlar ({matchComments.length})
               </h3>
 
-              <div className="comments-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: '200px', overflowY: 'auto', paddingRight: '0.5rem' }}>
+              <div className="comments-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: '300px', overflowY: 'auto', paddingRight: '0.5rem' }}>
                 {matchComments.length > 0 ? matchComments.map((c) => (
                   <div key={c.id} style={{ display: 'flex', gap: '1rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem', borderRadius: '10px' }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(0, 242, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -235,9 +314,41 @@ const FixturesPage = () => {
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
                         <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--accent-primary)' }}>{c.user}</span>
-                        <span style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{new Date(c.date).toLocaleDateString()}</span>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{new Date(c.date).toLocaleDateString()}</span>
+                          
+                          {/* Yorum Yönetim Butonları */}
+                          {(isAdmin || (user && user.psoUsername === c.user)) && (
+                            <div style={{ display: 'flex', gap: '0.3rem' }}>
+                              {(user && user.psoUsername === c.user) && (
+                                <button 
+                                  onClick={() => { setEditingComment(c); setEditText(c.text); }}
+                                  style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontSize: '0.6rem', cursor: 'pointer', padding: 0 }}
+                                >Düzenle</button>
+                              )}
+                              <button 
+                                onClick={() => handleDeleteComment(c.id)}
+                                style={{ background: 'none', border: 'none', color: '#ff4444', fontSize: '0.6rem', cursor: 'pointer', padding: 0 }}
+                              >Sil</button>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <p style={{ fontSize: '0.85rem', color: '#ddd' }}>{c.text}</p>
+                      
+                      {editingComment && editingComment.id === c.id ? (
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                          <input 
+                            type="text" 
+                            value={editText} 
+                            onChange={(e) => setEditText(e.target.value)}
+                            style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid var(--accent-primary)', borderRadius: '4px', padding: '0.4rem', color: '#fff', fontSize: '0.8rem' }}
+                          />
+                          <button onClick={handleUpdateComment} style={{ background: 'var(--accent-primary)', border: 'none', borderRadius: '4px', padding: '0 0.5rem', fontSize: '0.7rem', color: '#000', cursor: 'pointer' }}>Kaydet</button>
+                          <button onClick={() => setEditingComment(null)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '4px', padding: '0 0.5rem', fontSize: '0.7rem', color: '#fff', cursor: 'pointer' }}>İptal</button>
+                        </div>
+                      ) : (
+                        <p style={{ fontSize: '0.85rem', color: '#ddd' }}>{c.text}</p>
+                      )}
                     </div>
                   </div>
                 )) : (

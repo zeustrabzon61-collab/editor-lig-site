@@ -13,6 +13,7 @@ import Settings from './pages/Settings';
 import Squads from './pages/Squads';
 import TeamOfTheWeek from './pages/TeamOfTheWeek';
 import Awards from './pages/Awards';
+import GlobalChat from './components/GlobalChat';
 
 function App() {
   return (
@@ -41,6 +42,8 @@ function App() {
             <p>&copy; 2026 Editör Lig. Tüm Hakları Saklıdır.</p>
           </div>
         </footer>
+
+        <GlobalChat />
       </div>
     </Router>
   );

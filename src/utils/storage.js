@@ -244,3 +244,55 @@ export const addComment = (matchId, user, text) => {
   
   localStorage.setItem('pso_comments', JSON.stringify(allComments));
 };
+
+export const deleteComment = (matchId, commentId) => {
+  const comments = localStorage.getItem('pso_comments');
+  if (!comments) return;
+  const allComments = JSON.parse(comments);
+  if (!allComments[matchId]) return;
+  
+  allComments[matchId] = allComments[matchId].filter(c => c.id !== commentId);
+  localStorage.setItem('pso_comments', JSON.stringify(allComments));
+};
+
+export const updateComment = (matchId, commentId, newText) => {
+  const comments = localStorage.getItem('pso_comments');
+  if (!comments) return;
+  const allComments = JSON.parse(comments);
+  if (!allComments[matchId]) return;
+  
+  const comment = allComments[matchId].find(c => c.id === commentId);
+  if (comment) {
+    comment.text = newText;
+    comment.date = new Date().toISOString(); // Opsiyonel: Güncelleme tarihini de set edebiliriz
+    localStorage.setItem('pso_comments', JSON.stringify(allComments));
+  }
+};
+
+export const getGlobalChat = () => {
+  const chat = localStorage.getItem('pso_global_chat');
+  return chat ? JSON.parse(chat) : [];
+};
+
+export const addGlobalChatMessage = (user, text) => {
+  if (!user || !text) return;
+  const chat = getGlobalChat();
+  
+  chat.push({
+    id: `chat-${Date.now()}`,
+    user: user.psoUsername,
+    avatar: user.avatar,
+    text,
+    date: new Date().toISOString()
+  });
+  
+  // Son 100 mesajı tutalım (limit)
+  const limitedChat = chat.slice(-100);
+  localStorage.setItem('pso_global_chat', JSON.stringify(limitedChat));
+};
+
+export const deleteGlobalChatMessage = (messageId) => {
+  const chat = getGlobalChat();
+  const updatedChat = chat.filter(m => m.id !== messageId);
+  localStorage.setItem('pso_global_chat', JSON.stringify(updatedChat));
+};
