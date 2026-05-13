@@ -14,9 +14,9 @@ const getLogo = (teamName) => {
 const generateFixtures = (numWeeks) => {
   const fixtures = [];
   const baseRounds = [
-    [ [teams[0], teams[3]], [teams[1], teams[2]] ], // Hafta 1
-    [ [teams[0], teams[2]], [teams[3], teams[1]] ], // Hafta 2
-    [ [teams[0], teams[1]], [teams[2], teams[3]] ]  // Hafta 3
+    [ ['BAY FC', 'HAYAT OKULU FC'], ['ANTONY ULTRAS FC', 'OOG FC'] ], // Hafta 1
+    [ ['ANTONY ULTRAS FC', 'BAY FC'], ['OOG FC', 'HAYAT OKULU FC'] ], // Hafta 2
+    [ ['OOG FC', 'BAY FC'], ['ANTONY ULTRAS FC', 'HAYAT OKULU FC'] ]  // Hafta 3
   ];
 
   for (let i = 0; i < numWeeks; i++) {
@@ -29,12 +29,12 @@ const generateFixtures = (numWeeks) => {
   return fixtures;
 };
 
-const fixturesData = generateFixtures(16);
+const fixturesData = generateFixtures(12);
 
 const FixturesPage = () => {
   return (
     <div className="page-container container">
-      <h2 className="section-title">16 Haftalık <span className="neon-text">Fikstür</span></h2>
+      <h2 className="section-title">12 Haftalık <span className="neon-text">Fikstür</span></h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
         Editör Lig heyecanı başlıyor! Maçlar her gün düzenli olarak oynanacaktır.
       </p>
