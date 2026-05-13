@@ -39,7 +39,7 @@ const Standings = () => {
                 <tr key={item.name} className={idx < 2 ? 'top-team' : ''}>
                   <td>{idx + 1}</td>
                   <td className="team-cell">
-                    <div className="team-logo-placeholder"></div>
+                    <img src={item.logo} alt={item.name} className="team-logo-small" onError={(e) => e.target.style.display = 'none'} />
                     {item.name}
                   </td>
                   <td>{item.played}</td>

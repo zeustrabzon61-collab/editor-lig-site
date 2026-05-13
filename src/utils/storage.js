@@ -1,18 +1,29 @@
 
 const INITIAL_TEAMS = [
-  { name: 'BAY FC', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
-  { name: 'HAYAT OKULU FC', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
-  { name: 'OOG FC', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
-  { name: 'ANTONY ULTRAS FC', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
+  { name: 'BAY FC', logo: '/logos/bay_fc.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
+  { name: 'HAYAT OKULU FC', logo: '/logos/hayat_okulu.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
+  { name: 'OOG FC', logo: '/logos/oog.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
+  { name: 'ANTONY ULTRAS FC', logo: '/logos/antony_ultras.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
 ];
 
 export const getStorageData = () => {
-  const teams = localStorage.getItem('pso_teams');
+  const teamsStr = localStorage.getItem('pso_teams');
   const players = localStorage.getItem('pso_players');
   const matches = localStorage.getItem('pso_matches');
 
+  let teams = teamsStr ? JSON.parse(teamsStr) : INITIAL_TEAMS;
+
+  // Mevcut verilere logo bilgisini enjekte et (eğer yoksa)
+  teams = teams.map(t => {
+    const initial = INITIAL_TEAMS.find(it => it.name.toUpperCase() === t.name.toUpperCase());
+    if (initial && !t.logo) {
+      return { ...t, logo: initial.logo };
+    }
+    return t;
+  });
+
   return {
-    teams: teams ? JSON.parse(teams) : INITIAL_TEAMS,
+    teams,
     players: players ? JSON.parse(players) : [],
     matches: matches ? JSON.parse(matches) : [],
   };

@@ -1,6 +1,14 @@
 
 
-const teams = ["BAY FC", "HAYAT OKULU FC", "OOG FC", "ANTONY ULTRAS FC"];
+import { getStorageData } from '../utils/storage';
+
+const { teams: storedTeams } = getStorageData();
+const teams = storedTeams.map(t => t.name);
+
+const getLogo = (teamName) => {
+  const team = storedTeams.find(t => t.name.toUpperCase() === teamName.toUpperCase());
+  return team ? team.logo : null;
+};
 
 // Fikstür oluşturma algoritması (Round-robin döngüsü)
 const generateFixtures = (numWeeks) => {
@@ -37,9 +45,15 @@ const FixturesPage = () => {
             <div className="fixture-week">HAFTA {weekData.week}</div>
             {weekData.matches.map((match, idx) => (
               <div key={idx} className="match-row">
-                <div className="match-team">{match[0]}</div>
+                <div className="match-team">
+                  <img src={getLogo(match[0])} alt="" className="fixture-logo" onError={(e) => e.target.style.display = 'none'} />
+                  {match[0]}
+                </div>
                 <div className="match-score">VS</div>
-                <div className="match-team">{match[1]}</div>
+                <div className="match-team">
+                  {match[1]}
+                  <img src={getLogo(match[1])} alt="" className="fixture-logo" onError={(e) => e.target.style.display = 'none'} />
+                </div>
               </div>
             ))}
           </div>
