@@ -89,7 +89,7 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   const allPlayerStats = [...match.team1PlayerStats, ...match.team2PlayerStats];
   
   allPlayerStats.forEach(ps => {
-    let player = players.find(p => p.name === ps.playerName);
+    let player = players.find(p => p.name.toLowerCase() === ps.playerName.toLowerCase());
     // PSO JSON'da 'postion' yazım hatası olabiliyor, ikisini de kontrol et
     const pos = ps.position || ps.postion || 'CM';
     
