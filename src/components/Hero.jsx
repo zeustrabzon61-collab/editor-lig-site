@@ -7,7 +7,7 @@ const Hero = () => {
     <section className="hero">
       <div className="container">
         <div className="hero-badge animate-float">LİG TÜM HIZIYLA DEVAM EDİYOR</div>
-        <h1 className="hero-title">EFSANELERİN <span className="gradient-text">ARENASI</span></h1>
+        <h1 className="hero-title">EDİTÖRLERİN <span className="gradient-text">ARENASI</span></h1>
         <p className="hero-subtitle">
           Zirve yarışı kızışıyor. 4 dev takımın amansız şampiyonluk 
           mücadelesini yakından takip et.

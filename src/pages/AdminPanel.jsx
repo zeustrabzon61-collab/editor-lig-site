@@ -64,9 +64,20 @@ const AdminPanel = () => {
   const handleJsonProcess = () => {
     try {
       if (!jsonInput.trim()) return;
-      const match = JSON.parse(jsonInput);
+      
+      // JSON'u metin içinden ayıkla (başındaki/sonundaki gereksiz metinleri temizle)
+      const firstBrace = jsonInput.indexOf('{');
+      const lastBrace = jsonInput.lastIndexOf('}');
+      
+      if (firstBrace === -1 || lastBrace === -1) {
+        throw new Error('Geçersiz karakter dizimi');
+      }
+      
+      const cleanJson = jsonInput.substring(firstBrace, lastBrace + 1);
+      const match = JSON.parse(cleanJson);
       
       const checkTeam = (name) => {
+        if (!name) return null;
         const search = cleanTeamName(name);
         return teams.find(t => {
           const ex = cleanTeamName(t.name);
@@ -74,16 +85,16 @@ const AdminPanel = () => {
         });
       };
 
-      const t1Valid = checkTeam(match.team1Stats.teamName);
-      const t2Valid = checkTeam(match.team2Stats.teamName);
+      const t1Valid = checkTeam(match?.team1Stats?.teamName);
+      const t2Valid = checkTeam(match?.team2Stats?.teamName);
 
       if (!t1Valid || !t2Valid) {
         setPendingJson(match);
         setMappingData({
-          t1Original: match.team1Stats.teamName,
-          t2Original: match.team2Stats.teamName,
-          team1: t1Valid ? t1Valid.name : teams[0].name,
-          team2: t2Valid ? t2Valid.name : teams[1].name
+          t1Original: match?.team1Stats?.teamName || 'Bilinmiyor',
+          t2Original: match?.team2Stats?.teamName || 'Bilinmiyor',
+          team1: t1Valid ? t1Valid.name : (teams[0]?.name || ''),
+          team2: t2Valid ? t2Valid.name : (teams[1]?.name || '')
         });
         setShowMapping(true);
         return;
@@ -94,7 +105,8 @@ const AdminPanel = () => {
       setJsonInput('');
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
-      setStatus({ type: 'error', message: 'Geçersiz JSON formatı!' });
+      console.error('JSON Error:', err);
+      setStatus({ type: 'error', message: 'Hata: ' + err.message });
     }
   };
 
