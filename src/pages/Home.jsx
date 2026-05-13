@@ -3,6 +3,7 @@ import Hero from '../components/Hero';
 import { getStorageData } from '../utils/storage';
 import { Calendar, Trophy, BarChart3, ArrowRight } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import NewsTicker from '../components/NewsTicker';
 
 const Home = () => {
   const { matches, teams } = getStorageData();
@@ -16,6 +17,7 @@ const Home = () => {
   return (
     <div className="home-page">
       <Hero />
+      <NewsTicker />
       
       <section className="main-content container">
         <div className="home-grid">
