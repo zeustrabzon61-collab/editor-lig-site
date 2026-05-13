@@ -141,7 +141,13 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
   // Oyuncu İstatistiklerini Güncelle
   const allPlayerStats = [...match.team1PlayerStats, ...match.team2PlayerStats];
   
+  const matchScorers = [];
+  const matchAssists = [];
+
   allPlayerStats.forEach(ps => {
+    if (ps.goals > 0) matchScorers.push({ playerName: ps.playerName, goals: ps.goals, team: ps.team });
+    if (ps.assists > 0) matchAssists.push({ playerName: ps.playerName, assists: ps.assists, team: ps.team });
+
     let player = players.find(p => p.name.toLowerCase() === ps.playerName.toLowerCase());
     
     // Bütün olası PSO hatalarını ve büyük/küçük harf durumlarını kapsayalım
@@ -201,7 +207,9 @@ export const processMatchJSON = (jsonData, teamMappings = {}) => {
     team1: t1.teamName,
     team2: t2.teamName,
     score1: t1.goals,
-    score2: t2.goals
+    score2: t2.goals,
+    scorers: matchScorers,
+    assists: matchAssists
   });
 
   saveStorageData({ teams, players, matches });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Trophy, Users, Calendar, BarChart3, Home, Menu, Settings, User, LayoutDashboard, LogOut } from 'lucide-react';
+import { Trophy, Users, Calendar, BarChart3, Home, Menu, Settings, User, LayoutDashboard, LogOut, Award, Star, Shield } from 'lucide-react';
 
 import { getCurrentUser, logoutUser } from '../utils/storage';
 
@@ -58,6 +58,21 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/kadrolar" className={({ isActive }) => isActive ? 'active' : ''}>
+              <Users size={18} /> Kadrolar
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/haftanin-takimi" className={({ isActive }) => isActive ? 'active' : ''}>
+              <Star size={18} /> Haftanın Takımı
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/oduller" className={({ isActive }) => isActive ? 'active' : ''}>
+              <Award size={18} /> Ödüller
+            </NavLink>
+          </li>
+          <li>
             <NavLink to="/istatistikler" className={({ isActive }) => isActive ? 'active' : ''}>
               <BarChart3 size={18} /> İstatistikler
             </NavLink>
@@ -87,7 +102,20 @@ const Navbar = () => {
           <div style={{ position: 'relative' }}>
             <Menu className="mobile-menu-icon" size={24} onClick={() => setMenuOpen(!menuOpen)} style={{ cursor: 'pointer', display: 'block' }} />
             {menuOpen && (
-              <div className="glass-card animate-fade-in" style={{ position: 'absolute', top: '150%', right: '0', minWidth: '150px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', zIndex: 100 }}>
+              <div className="glass-card animate-fade-in" style={{ position: 'absolute', top: '150%', right: '0', minWidth: '200px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', zIndex: 100 }}>
+                {/* Mobile Extra Links */}
+                <div className="mobile-only-links" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', pb: '0.5rem', mb: '0.5rem' }}>
+                  <NavLink to="/kadrolar" onClick={() => setMenuOpen(false)} style={{ padding: '0.5rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Users size={16} /> Kadrolar
+                  </NavLink>
+                  <NavLink to="/haftanin-takimi" onClick={() => setMenuOpen(false)} style={{ padding: '0.5rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Star size={16} /> Haftanın Takımı
+                  </NavLink>
+                  <NavLink to="/oduller" onClick={() => setMenuOpen(false)} style={{ padding: '0.5rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Award size={16} /> Ödüller
+                  </NavLink>
+                </div>
+                
                 {user ? (
                   <>
                     <button className="btn-secondary" onClick={() => { setMenuOpen(false); navigate('/settings'); }} style={{ width: '100%', justifyContent: 'flex-start', padding: '0.75rem', fontSize: '0.9rem' }}>

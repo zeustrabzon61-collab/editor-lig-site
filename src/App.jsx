@@ -7,10 +7,12 @@ import FixturesPage from './pages/FixturesPage';
 import AdminPanel from './pages/AdminPanel';
 import Leaderboards from './pages/Leaderboards';
 import PlayersPage from './pages/PlayersPage';
-
 import Auth from './pages/Auth';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import Squads from './pages/Squads';
+import TeamOfTheWeek from './pages/TeamOfTheWeek';
+import Awards from './pages/Awards';
 
 function App() {
   return (
@@ -24,11 +26,13 @@ function App() {
             <Route path="/fikstur" element={<FixturesPage />} />
             <Route path="/istatistikler" element={<Leaderboards />} />
             <Route path="/oyuncular" element={<PlayersPage />} />
+            <Route path="/kadrolar" element={<Squads />} />
+            <Route path="/haftanin-takimi" element={<TeamOfTheWeek />} />
+            <Route path="/oduller" element={<Awards />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/takimlar" element={<div className="container page-container"><h2 className="section-title">Takımlar</h2><p>Pek yakında...</p></div>} />
           </Routes>
         </main>
         
