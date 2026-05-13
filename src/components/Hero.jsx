@@ -6,11 +6,11 @@ const Hero = () => {
   return (
     <section className="hero">
       <div className="container">
-        <div className="hero-badge animate-float">EDİTÖR LİG BAŞLIYOR</div>
-        <h1 className="hero-title">REKABETİN <span className="gradient-text">YENİ DÜNYASI</span></h1>
+        <div className="hero-badge animate-float">LİG TÜM HIZIYLA DEVAM EDİYOR</div>
+        <h1 className="hero-title">EFSANELERİN <span className="gradient-text">ARENASI</span></h1>
         <p className="hero-subtitle">
-          4 Dev takım, 12 haftalık amansız mücadele ve tek bir şampiyon. 
-          Saha seni bekliyor.
+          Zirve yarışı kızışıyor. 4 dev takımın amansız şampiyonluk 
+          mücadelesini yakından takip et.
         </p>
         
         <div className="hero-btns">

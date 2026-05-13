@@ -69,28 +69,16 @@ button {
   text-shadow: var(--neon-glow);
 }
 
-/* Navbar Redesign */
+/* Navbar Redesign V2 */
 .navbar {
-  height: 90px;
-  background: rgba(2, 2, 5, 0.4);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  height: 80px;
+  background: rgba(2, 2, 5, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.4s ease;
-}
-
-.navbar:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
-  opacity: 0.2;
+  border-bottom: 1px solid rgba(0, 242, 255, 0.1);
 }
 
 .nav-content {
@@ -101,58 +89,41 @@ button {
 }
 
 .logo {
+  text-decoration: none;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0;
-  text-decoration: none;
-  line-height: 1;
 }
 
 .logo-text {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 900;
+  color: #fff;
   letter-spacing: 1px;
-  text-transform: uppercase;
-  background: linear-gradient(135deg, #00f2ff, #7000ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .logo-subtext {
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-  letter-spacing: 4px;
+  font-size: 0.6rem;
+  color: var(--accent-primary);
+  letter-spacing: 2px;
   text-transform: uppercase;
-  margin-top: 2px;
+  font-weight: 700;
 }
 
 .nav-links {
   display: flex;
   list-style: none;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 0.4rem;
-  border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .nav-links a {
   text-decoration: none;
   color: var(--text-secondary);
   font-weight: 700;
-  font-size: 0.8rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0.6rem 1rem;
-  border-radius: 100px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.nav-links a svg {
-  opacity: 0.7;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -161,14 +132,30 @@ button {
 }
 
 .nav-links a.active {
-  color: #000;
-  background: var(--accent-primary);
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+  color: var(--accent-primary);
+  background: rgba(0, 242, 255, 0.05);
+  position: relative;
 }
 
-.nav-links a.active svg {
-  opacity: 1;
-  stroke: #000;
+.nav-links a.active:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1rem;
+  right: 1rem;
+  height: 2px;
+  background: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary);
+}
+
+.nav-links a svg {
+  display: none;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 /* Hero Section */
