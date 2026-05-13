@@ -32,8 +32,8 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container nav-content">
         <NavLink to="/" className="logo">
-          <Trophy className="neon-text" size={32} />
-          <span className="logo-text gradient-text">EDİTÖR LİG</span>
+          <span className="logo-text">EDİTÖR LİG</span>
+          <span className="logo-subtext">Community Portal</span>
         </NavLink>
         
         <ul className="nav-links">
