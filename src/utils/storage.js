@@ -59,7 +59,8 @@ const syncToCloud = async (data) => {
             matches: data.matches || current.matches,
             users: data.users || current.users,
             comments: data.comments || (comments ? JSON.parse(comments) : {}),
-            chat: data.chat || (chat ? JSON.parse(chat) : [])
+            chat: data.chat || (chat ? JSON.parse(chat) : []),
+            totw: data.totw || (localStorage.getItem('pso_totw_v1') ? JSON.parse(localStorage.getItem('pso_totw_v1')) : {})
         };
 
         await fetch(CLOUD_STORAGE_URL, {
@@ -83,6 +84,7 @@ export const initCloudSync = async () => {
                 localStorage.setItem('pso_users_v3', JSON.stringify(cloudData.users || []));
                 if (cloudData.comments) localStorage.setItem('pso_comments', JSON.stringify(cloudData.comments));
                 if (cloudData.chat) localStorage.setItem('pso_global_chat', JSON.stringify(cloudData.chat));
+                if (cloudData.totw) localStorage.setItem('pso_totw_v1', JSON.stringify(cloudData.totw));
                 window.dispatchEvent(new Event('storage'));
                 return true;
             }

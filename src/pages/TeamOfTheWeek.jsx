@@ -33,9 +33,6 @@ const TeamOfTheWeek = () => {
 
     // 2. Yoksa otomatik hesapla
     let pool = weekPerformances.filter(p => posFilter.includes(p.position));
-    if (pool.length === 0) {
-      pool = players.filter(p => posFilter.includes(p.position));
-    }
 
     if (pool.length === 0) return { name: 'Seçilmedi', team: '-', position: posFilter[0] };
     
