@@ -63,9 +63,9 @@ const INITIAL_MATCHES = [
 ];
 
 export const getStorageData = () => {
-  const teamsStr = localStorage.getItem('pso_teams');
-  const playersStr = localStorage.getItem('pso_players');
-  const matchesStr = localStorage.getItem('pso_matches');
+  const teamsStr = localStorage.getItem('pso_teams_v2');
+  const playersStr = localStorage.getItem('pso_players_v2');
+  const matchesStr = localStorage.getItem('pso_matches_v2');
   const usersStr = localStorage.getItem('pso_users_v3'); 
 
   let teams = teamsStr ? JSON.parse(teamsStr) : INITIAL_TEAMS;
@@ -90,9 +90,9 @@ export const getStorageData = () => {
 };
 
 export const saveStorageData = (data) => {
-  if (data.teams) localStorage.setItem('pso_teams', JSON.stringify(data.teams));
-  if (data.players) localStorage.setItem('pso_players', JSON.stringify(data.players));
-  if (data.matches) localStorage.setItem('pso_matches', JSON.stringify(data.matches));
+  if (data.teams) localStorage.setItem('pso_teams_v2', JSON.stringify(data.teams));
+  if (data.players) localStorage.setItem('pso_players_v2', JSON.stringify(data.players));
+  if (data.matches) localStorage.setItem('pso_matches_v2', JSON.stringify(data.matches));
   if (data.users) localStorage.setItem('pso_users_v3', JSON.stringify(data.users));
 };
 
