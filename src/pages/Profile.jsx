@@ -14,7 +14,11 @@ const Profile = () => {
       setUser(currentUser);
       
       const { players } = getStorageData();
-      const stats = players.find(p => p.name.toLowerCase() === currentUser.psoUsername.toLowerCase());
+      // Önce PSO ID ile, sonra kullanıcı adı ile eşleştirme yap
+      const stats = players.find(p => 
+        (p.psoId && p.psoId === currentUser.psoId) || 
+        (p.name && p.name.toLowerCase() === currentUser.psoUsername.toLowerCase())
+      );
       setPlayerStats(stats);
     }
   }, []);
@@ -45,7 +49,7 @@ const Profile = () => {
           <div className="fifa-card">
             <div className="fifa-card-inner">
               <div className="fifa-card-top">
-                <div className="f-rating">{Math.min(99, 70 + (displayStats.goals * 2) + (displayStats.assists))}</div>
+                <div className="f-rating">{displayStats.rating || Math.min(99, 70 + (displayStats.goals * 2) + (displayStats.assists))}</div>
                 <div className="f-position">{user.position || displayStats.position || 'CM'}</div>
               </div>
               <div className="f-avatar-area" style={{ position: 'relative' }}>

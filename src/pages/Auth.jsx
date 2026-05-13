@@ -6,7 +6,6 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [psoId, setPsoId] = useState('');
   const [password, setPassword] = useState('');
-  const [psoUsername, setPsoUsername] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -21,11 +20,11 @@ const Auth = () => {
         setError(res.message);
       }
     } else {
-      if (!psoId || !password || !psoUsername) {
+      if (!psoId || !password) {
         setError('Lütfen tüm alanları doldurun.');
         return;
       }
-      const res = registerUser(psoId, psoUsername, password);
+      const res = registerUser(psoId, password);
       if (res.success) {
         window.location.href = '/profile';
       } else {
@@ -53,13 +52,6 @@ const Auth = () => {
             <Mail size={18} />
             <input type="text" placeholder="PSO ID (Örn: dooukqkT)" value={psoId} onChange={e => setPsoId(e.target.value)} />
           </div>
-
-          {!isLogin && (
-            <div className="input-group">
-              <User size={18} />
-              <input type="text" placeholder="PSO Kullanıcı Adı (Oyundaki Adın)" value={psoUsername} onChange={e => setPsoUsername(e.target.value)} />
-            </div>
-          )}
           
           <div className="input-group">
             <Lock size={18} />

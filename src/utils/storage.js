@@ -6,17 +6,16 @@ const INITIAL_TEAMS = [
 ];
 
 const INITIAL_PLAYERS = [
-  { name: 'drass', team: 'ANTONY ULTRAS FC', goals: 1, assists: 1, played: 1 },
-  { name: 'Xsaer', team: 'ANTONY ULTRAS FC', goals: 2, assists: 0, played: 1 },
-  { name: 'Wolfi', team: 'ANTONY ULTRAS FC', goals: 1, assists: 1, played: 1 },
-  { name: 'Neeko', team: 'OOG FC', goals: 1, assists: 1, played: 1 },
-  { name: 'cunha', team: 'OOG FC', goals: 1, assists: 0, played: 1 },
-  { name: 'slow', team: 'OOG FC', goals: 2, assists: 1, played: 1 },
-  { name: 'saksafoncihazı', team: 'HAYAT OKULU FC', goals: 2, assists: 1, played: 1 },
-  { name: 'beko', team: 'HAYAT OKULU FC', goals: 1, assists: 1, played: 1 },
-  { name: 'yurtsever', team: 'BAY FC', goals: 2, assists: 0, played: 1 },
-  { name: 'yakup tv', team: 'BAY FC', goals: 0, assists: 1, played: 1 },
-  { name: 'lasiks pilayer', team: 'HAYAT OKULU FC', goals: 0, assists: 1, played: 1 },
+  { psoId: 'dooukqkT', name: 'drass', team: 'ANTONY ULTRAS FC', goals: 1, assists: 1, played: 1, rating: 75 },
+  { psoId: 'XsaerID', name: 'Xsaer', team: 'ANTONY ULTRAS FC', goals: 2, assists: 0, played: 1, rating: 73 },
+  { psoId: 'WolfiID', name: 'Wolfi', team: 'ANTONY ULTRAS FC', goals: 1, assists: 1, played: 1, rating: 74 },
+  { psoId: 'NeekoID', name: 'Neeko', team: 'OOG FC', goals: 1, assists: 1, played: 1, rating: 72 },
+  { psoId: 'cunhaID', name: 'cunha', team: 'OOG FC', goals: 1, assists: 0, played: 1, rating: 70 },
+  { psoId: 'slowID', name: 'slow', team: 'OOG FC', goals: 2, assists: 1, played: 1, rating: 76 },
+  { psoId: 'saksafonID', name: 'saksafoncihazı', team: 'HAYAT OKULU FC', goals: 2, assists: 1, played: 1, rating: 78 },
+  { psoId: 'bekoID', name: 'beko', team: 'HAYAT OKULU FC', goals: 1, assists: 1, played: 1, rating: 74 },
+  { psoId: 'yurtseverID', name: 'yurtsever', team: 'BAY FC', goals: 2, assists: 0, played: 1, rating: 73 },
+  { psoId: 'yakupID', name: 'yakup tv', team: 'BAY FC', goals: 0, assists: 1, played: 1, rating: 71 },
 ];
 
 const INITIAL_MATCHES = [
@@ -67,7 +66,7 @@ export const getStorageData = () => {
   const teamsStr = localStorage.getItem('pso_teams');
   const playersStr = localStorage.getItem('pso_players');
   const matchesStr = localStorage.getItem('pso_matches');
-  const usersStr = localStorage.getItem('pso_users');
+  const usersStr = localStorage.getItem('pso_users_v2'); // Yeni anahtar ile eski hesapları sıfırladık
 
   let teams = teamsStr ? JSON.parse(teamsStr) : INITIAL_TEAMS;
   let players = playersStr ? JSON.parse(playersStr) : INITIAL_PLAYERS;
@@ -94,11 +93,11 @@ export const saveStorageData = (data) => {
   if (data.teams) localStorage.setItem('pso_teams', JSON.stringify(data.teams));
   if (data.players) localStorage.setItem('pso_players', JSON.stringify(data.players));
   if (data.matches) localStorage.setItem('pso_matches', JSON.stringify(data.matches));
-  if (data.users) localStorage.setItem('pso_users', JSON.stringify(data.users));
+  if (data.users) localStorage.setItem('pso_users_v2', JSON.stringify(data.users));
 };
 
 export const getCurrentUser = () => {
-  const user = localStorage.getItem('pso_current_user');
+  const user = localStorage.getItem('pso_current_user_v2');
   return user ? JSON.parse(user) : null;
 };
 
@@ -106,17 +105,25 @@ export const loginUser = (psoId, password) => {
   const { users } = getStorageData();
   const user = users.find(u => u.psoId === psoId && u.password === password);
   if (user) {
-    localStorage.setItem('pso_current_user', JSON.stringify(user));
+    localStorage.setItem('pso_current_user_v2', JSON.stringify(user));
     return { success: true, user };
   }
   return { success: false, message: 'Geçersiz PSO ID veya şifre.' };
 };
 
-export const registerUser = (psoId, psoUsername, password) => {
+export const logoutUser = () => {
+  localStorage.removeItem('pso_current_user_v2');
+};
+
+export const registerUser = (psoId, password) => {
   const { users } = getStorageData();
   if (users.find(u => u.psoId === psoId)) {
     return { success: false, message: 'Bu PSO ID zaten kayıtlı.' };
   }
+
+  // Eğer bu ID INITIAL_PLAYERS içinde varsa ismini oradan al, yoksa ID'yi isim olarak kullan
+  const knownPlayer = INITIAL_PLAYERS.find(p => p.psoId === psoId);
+  const psoUsername = knownPlayer ? knownPlayer.name : `Oyuncu_${psoId}`;
 
   const newUser = {
     psoId,
@@ -127,8 +134,8 @@ export const registerUser = (psoId, psoUsername, password) => {
   };
 
   const updatedUsers = [...users, newUser];
-  localStorage.setItem('pso_users', JSON.stringify(updatedUsers));
-  localStorage.setItem('pso_current_user', JSON.stringify(newUser));
+  localStorage.setItem('pso_users_v2', JSON.stringify(updatedUsers));
+  localStorage.setItem('pso_current_user_v2', JSON.stringify(newUser));
   return { success: true, user: newUser };
 };
 
