@@ -1,18 +1,77 @@
-
 const INITIAL_TEAMS = [
-  { name: 'BAY FC', logo: '/logos/bay_fc.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
-  { name: 'HAYAT OKULU FC', logo: '/logos/hayat_okulu.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
-  { name: 'OOG FC', logo: '/logos/oog.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
-  { name: 'ANTONY ULTRAS FC', logo: '/logos/antony_ultras.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
+  { name: 'BAY FC', logo: 'https://i.ibb.co/pX1L5K1/bay-logo.png', played: 1, won: 0, drawn: 0, lost: 1, gf: 2, ga: 3, points: 0 },
+  { name: 'HAYAT OKULU FC', logo: 'https://i.ibb.co/mS5S8k7/hayat-okulu.png', played: 1, won: 1, drawn: 0, lost: 0, gf: 3, ga: 2, points: 3 },
+  { name: 'OOG FC', logo: 'https://i.ibb.co/vY5T6N9/oog-fc.png', played: 1, won: 0, drawn: 1, lost: 0, gf: 4, ga: 4, points: 1 },
+  { name: 'ANTONY ULTRAS FC', logo: 'https://i.ibb.co/VqXNqN8/antony-ultras.png', played: 1, won: 0, drawn: 1, lost: 0, gf: 4, ga: 4, points: 1 },
+];
+
+const INITIAL_PLAYERS = [
+  { name: 'drass', team: 'ANTONY ULTRAS FC', goals: 1, assists: 1, played: 1 },
+  { name: 'Xsaer', team: 'ANTONY ULTRAS FC', goals: 2, assists: 0, played: 1 },
+  { name: 'Wolfi', team: 'ANTONY ULTRAS FC', goals: 1, assists: 1, played: 1 },
+  { name: 'Neeko', team: 'OOG FC', goals: 1, assists: 1, played: 1 },
+  { name: 'cunha', team: 'OOG FC', goals: 1, assists: 0, played: 1 },
+  { name: 'slow', team: 'OOG FC', goals: 2, assists: 1, played: 1 },
+  { name: 'saksafoncihazı', team: 'HAYAT OKULU FC', goals: 2, assists: 1, played: 1 },
+  { name: 'beko', team: 'HAYAT OKULU FC', goals: 1, assists: 1, played: 1 },
+  { name: 'yurtsever', team: 'BAY FC', goals: 2, assists: 0, played: 1 },
+  { name: 'yakup tv', team: 'BAY FC', goals: 0, assists: 1, played: 1 },
+  { name: 'lasiks pilayer', team: 'HAYAT OKULU FC', goals: 0, assists: 1, played: 1 },
+];
+
+const INITIAL_MATCHES = [
+  {
+    id: 'match-1',
+    team1: 'ANTONY ULTRAS FC',
+    team2: 'OOG FC',
+    score1: 4,
+    score2: 4,
+    date: '2024-05-13',
+    scorers: [
+      { playerName: 'drass', goals: 1, team: 'ANTONY ULTRAS FC' },
+      { playerName: 'Xsaer', goals: 2, team: 'ANTONY ULTRAS FC' },
+      { playerName: 'Wolfi', goals: 1, team: 'ANTONY ULTRAS FC' },
+      { playerName: 'Neeko', goals: 1, team: 'OOG FC' },
+      { playerName: 'cunha', goals: 1, team: 'OOG FC' },
+      { playerName: 'slow', goals: 2, team: 'OOG FC' }
+    ],
+    assists: [
+      { playerName: 'drass', assists: 1, team: 'ANTONY ULTRAS FC' },
+      { playerName: 'Wolfi', assists: 1, team: 'ANTONY ULTRAS FC' },
+      { playerName: 'Neeko', assists: 1, team: 'OOG FC' },
+      { playerName: 'slow', assists: 1, team: 'OOG FC' }
+    ]
+  },
+  {
+    id: 'match-2',
+    team1: 'HAYAT OKULU FC',
+    team2: 'BAY FC',
+    score1: 3,
+    score2: 2,
+    date: '2024-05-13',
+    scorers: [
+      { playerName: 'saksafoncihazı', goals: 2, team: 'HAYAT OKULU FC' },
+      { playerName: 'beko', goals: 1, team: 'HAYAT OKULU FC' },
+      { playerName: 'yurtsever', goals: 2, team: 'BAY FC' }
+    ],
+    assists: [
+      { playerName: 'saksafoncihazı', assists: 1, team: 'HAYAT OKULU FC' },
+      { playerName: 'beko', assists: 1, team: 'HAYAT OKULU FC' },
+      { playerName: 'lasiks pilayer', assists: 1, team: 'HAYAT OKULU FC' },
+      { playerName: 'yakup tv', assists: 1, team: 'BAY FC' }
+    ]
+  }
 ];
 
 export const getStorageData = () => {
   const teamsStr = localStorage.getItem('pso_teams');
-  const players = localStorage.getItem('pso_players');
-  const matches = localStorage.getItem('pso_matches');
-  const users = localStorage.getItem('pso_users');
+  const playersStr = localStorage.getItem('pso_players');
+  const matchesStr = localStorage.getItem('pso_matches');
+  const usersStr = localStorage.getItem('pso_users');
 
   let teams = teamsStr ? JSON.parse(teamsStr) : INITIAL_TEAMS;
+  let players = playersStr ? JSON.parse(playersStr) : INITIAL_PLAYERS;
+  let matches = matchesStr ? JSON.parse(matchesStr) : INITIAL_MATCHES;
 
   // Mevcut verilere logo bilgisini enjekte et (eğer yoksa)
   teams = teams.map(t => {
@@ -22,11 +81,12 @@ export const getStorageData = () => {
     }
     return t;
   });
+
   return {
     teams,
-    players: players ? JSON.parse(players) : [],
-    matches: matches ? JSON.parse(matches) : [],
-    users: users ? JSON.parse(users) : [],
+    players,
+    matches,
+    users: usersStr ? JSON.parse(usersStr) : [],
   };
 };
 
