@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName } from '../utils/storage';
+import { processMatchJSON, getStorageData, saveStorageData, cleanTeamName, resetAllData } from '../utils/storage';
 import { Upload, CheckCircle, AlertCircle, Trash2, Lock, LogOut, Plus, Save, ClipboardList, Info } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -191,9 +191,12 @@ const AdminPanel = () => {
   };
 
   const clearDatabase = () => {
-    if (window.confirm('Verileri sıfırlamak istediğinize emin misiniz?')) {
-      localStorage.clear();
-      window.location.href = '/';
+    if (window.confirm('Verileri sıfırlamak istediğinize emin misiniz? Puan durumu ve tüm istatistikler silinecektir.')) {
+      resetAllData();
+      setStatus({ type: 'success', message: 'Tüm veriler sıfırlandı!' });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     }
   };
 

@@ -1,66 +1,13 @@
 const INITIAL_TEAMS = [
-  { name: 'BAY FC', logo: '/logos/bay_fc.png', played: 1, won: 0, drawn: 0, lost: 1, gf: 2, ga: 3, points: 0 },
-  { name: 'HAYAT OKULU FC', logo: '/logos/hayat_okulu.png', played: 1, won: 1, drawn: 0, lost: 0, gf: 3, ga: 2, points: 3 },
-  { name: 'OOG FC', logo: '/logos/oog.png', played: 1, won: 0, drawn: 1, lost: 0, gf: 4, ga: 4, points: 1 },
-  { name: 'ANTONY ULTRAS FC', logo: '/logos/antony_ultras.png', played: 1, won: 0, drawn: 1, lost: 0, gf: 4, ga: 4, points: 1 },
+  { name: 'BAY FC', logo: '/logos/bay_fc.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
+  { name: 'HAYAT OKULU FC', logo: '/logos/hayat_okulu.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
+  { name: 'OOG FC', logo: '/logos/oog.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
+  { name: 'ANTONY ULTRAS FC', logo: '/logos/antony_ultras.png', played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 },
 ];
 
-const INITIAL_PLAYERS = [
-  { psoId: 'dooukqkT', name: 'drass', team: 'ANTONY ULTRAS FC', goals: 1, assists: 1, played: 1, rating: 75 },
-  { psoId: 'XsaerID', name: 'Xsaer', team: 'ANTONY ULTRAS FC', goals: 2, assists: 0, played: 1, rating: 73 },
-  { psoId: 'WolfiID', name: 'Wolfi', team: 'ANTONY ULTRAS FC', goals: 1, assists: 1, played: 1, rating: 74 },
-  { psoId: 'NeekoID', name: 'Neeko', team: 'OOG FC', goals: 1, assists: 1, played: 1, rating: 72 },
-  { psoId: 'cunhaID', name: 'cunha', team: 'OOG FC', goals: 1, assists: 0, played: 1, rating: 70 },
-  { psoId: 'slowID', name: 'slow', team: 'OOG FC', goals: 2, assists: 1, played: 1, rating: 76 },
-  { psoId: 'saksafonID', name: 'saksafoncihazı', team: 'HAYAT OKULU FC', goals: 2, assists: 1, played: 1, rating: 78 },
-  { psoId: 'bekoID', name: 'beko', team: 'HAYAT OKULU FC', goals: 1, assists: 1, played: 1, rating: 74 },
-  { psoId: 'yurtseverID', name: 'yurtsever', team: 'BAY FC', goals: 2, assists: 0, played: 1, rating: 73 },
-  { psoId: 'yakupID', name: 'yakup tv', team: 'BAY FC', goals: 0, assists: 1, played: 1, rating: 71 },
-];
+const INITIAL_PLAYERS = [];
 
-const INITIAL_MATCHES = [
-  {
-    id: 'match-1',
-    team1: 'ANTONY ULTRAS FC',
-    team2: 'OOG FC',
-    score1: 4,
-    score2: 4,
-    date: '2024-05-13',
-    scorers: [
-      { playerName: 'drass', goals: 1, team: 'ANTONY ULTRAS FC' },
-      { playerName: 'Xsaer', goals: 2, team: 'ANTONY ULTRAS FC' },
-      { playerName: 'Wolfi', goals: 1, team: 'ANTONY ULTRAS FC' },
-      { playerName: 'Neeko', goals: 1, team: 'OOG FC' },
-      { playerName: 'cunha', goals: 1, team: 'OOG FC' },
-      { playerName: 'slow', goals: 2, team: 'OOG FC' }
-    ],
-    assists: [
-      { playerName: 'drass', assists: 1, team: 'ANTONY ULTRAS FC' },
-      { playerName: 'Wolfi', assists: 1, team: 'ANTONY ULTRAS FC' },
-      { playerName: 'Neeko', assists: 1, team: 'OOG FC' },
-      { playerName: 'slow', assists: 1, team: 'OOG FC' }
-    ]
-  },
-  {
-    id: 'match-2',
-    team1: 'HAYAT OKULU FC',
-    team2: 'BAY FC',
-    score1: 3,
-    score2: 2,
-    date: '2024-05-13',
-    scorers: [
-      { playerName: 'saksafoncihazı', goals: 2, team: 'HAYAT OKULU FC' },
-      { playerName: 'beko', goals: 1, team: 'HAYAT OKULU FC' },
-      { playerName: 'yurtsever', goals: 2, team: 'BAY FC' }
-    ],
-    assists: [
-      { playerName: 'saksafoncihazı', assists: 1, team: 'HAYAT OKULU FC' },
-      { playerName: 'beko', assists: 1, team: 'HAYAT OKULU FC' },
-      { playerName: 'lasiks pilayer', assists: 1, team: 'HAYAT OKULU FC' },
-      { playerName: 'yakup tv', assists: 1, team: 'BAY FC' }
-    ]
-  }
-];
+const INITIAL_MATCHES = [];
 
 export const getStorageData = () => {
   const teamsStr = localStorage.getItem('pso_teams_v2');
@@ -362,4 +309,27 @@ export const deleteGlobalChatMessage = (messageId) => {
   const chat = getGlobalChat();
   const updatedChat = chat.filter(m => m.id !== messageId);
   localStorage.setItem('pso_global_chat', JSON.stringify(updatedChat));
+};
+
+export const resetAllData = () => {
+  const { teams, users } = getStorageData();
+  
+  // Reset team stats but keep logos and names
+  const resetTeams = teams.map(t => ({
+    ...t,
+    played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0
+  }));
+
+  // Reset user stats
+  const resetUsers = users.map(u => ({
+    ...u,
+    stats: { played: 0, goals: 0, assists: 0 }
+  }));
+
+  localStorage.setItem('pso_teams_v2', JSON.stringify(resetTeams));
+  localStorage.setItem('pso_players_v2', JSON.stringify([]));
+  localStorage.setItem('pso_matches_v2', JSON.stringify([]));
+  localStorage.setItem('pso_users_v3', JSON.stringify(resetUsers));
+  localStorage.removeItem('pso_comments');
+  localStorage.removeItem('pso_global_chat');
 };
