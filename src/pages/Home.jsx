@@ -38,11 +38,13 @@ const Home = () => {
                 <div key={idx} className="glass-card result-card">
                   <div className="r-teams">
                     <div className="r-team">
-                      {getLogo(match.team1) ? (
-                        <img src={getLogo(match.team1)} alt={match.team1} className="r-logo-img" />
-                      ) : (
-                        <div className="r-logo">{match.team1[0]}</div>
-                      )}
+                      <div className="r-logo">
+                        {getLogo(match.team1) ? (
+                          <img src={getLogo(match.team1)} alt={match.team1} className="r-logo-img" />
+                        ) : (
+                          match.team1[0]
+                        )}
+                      </div>
                       <span className="r-name">{match.team1}</span>
                     </div>
                     <div className="r-score-box">
@@ -51,11 +53,13 @@ const Home = () => {
                       <span className="r-score">{match.score2}</span>
                     </div>
                     <div className="r-team">
-                      {getLogo(match.team2) ? (
-                        <img src={getLogo(match.team2)} alt={match.team2} className="r-logo-img" />
-                      ) : (
-                        <div className="r-logo">{match.team2[0]}</div>
-                      )}
+                      <div className="r-logo">
+                        {getLogo(match.team2) ? (
+                          <img src={getLogo(match.team2)} alt={match.team2} className="r-logo-img" />
+                        ) : (
+                          match.team2[0]
+                        )}
+                      </div>
                       <span className="r-name">{match.team2}</span>
                     </div>
                   </div>

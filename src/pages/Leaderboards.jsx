@@ -29,7 +29,7 @@ const Leaderboards = () => {
           label="Asist" 
         />
         <LeaderboardTable 
-          title="En İyi Kaleciler" 
+          title="Kurtarış Krallığı" 
           icon={<Shield size={18} color="#00ff64" />} 
           data={getTop('saves')} 
           statKey="saves" 
